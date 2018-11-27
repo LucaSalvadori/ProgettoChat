@@ -70,13 +70,12 @@ class Connect extends Thread {
                     
                     out.println(message);//mando la lista al client (implementare aggiornamenti alla lista e invio di tali aggiornamenti ai client)
                     
+                    
                     while(true){//aggiungere condizione di uscita
                         message = name+"<message>"+in.readLine()+"</message>";//leggo un messaggio
                         System.out.println(message);//stampo a video
                         
-                        
-                        
-                        
+
                         for (Connect conection : conections) {//lo mando a tutti i client connesi attraverso la lista delle classi conection
                             conection.print(message);
                         }
