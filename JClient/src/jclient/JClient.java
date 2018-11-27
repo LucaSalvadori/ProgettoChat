@@ -6,7 +6,7 @@
 package jclient;
 
 /**
- *
+ *Matteo è mona
  * @author angelo.arena
  */
 import java.io.*;
@@ -28,7 +28,7 @@ public class JClient {
         PrintStream out;
         Socket socket;
         String messaggio;
-        String name = "Host"+Math.random(); //solo  per test
+        String name = "Host"+(int)(Math.random()*10); //solo  per test
         try {
             socket = new Socket("localhost", 4000);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

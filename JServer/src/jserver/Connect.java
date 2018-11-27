@@ -19,19 +19,25 @@ import java.util.logging.Logger;
 class Connect extends Thread {
     ArrayList<Connect> conections;
         private Socket client = null;
-        BufferedReader in = null;
-        PrintStream out = null;
-        String host;
-        String name;
+        private BufferedReader in = null;
+        private PrintStream out = null;
+        private String host;
+        private String name;
+        private Server s;
 
         
         public void print(String message){
             out.println(message);
         }
 
-        public Connect(Socket clienSocket, String host, ArrayList<Connect> conections) {
+
+        public String getHostName() {
+            return name;
+        }
+
+        public Connect(Socket clienSocket, ArrayList<Connect> conections, Server s) {
             this.conections = conections;
-            this.host = host;
+            this.s = s;
             client = clienSocket;
             try {
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -56,13 +62,20 @@ class Connect extends Thread {
                     
                     name = in.readLine();//leggo l'hostname
                     
-                    JServer.host += name;//lo aggiungo alla lista condivisa
+                    message = "<host>";
+                    for (Connect conection : conections) {
+                        message += conection.getHostName();
+                    }
+                    message += "</host>";
                     
-                    out.println("<host>"+JServer.host+"</host>");//mando la lista al client (implementare aggiornamenti alla lista e invio di tali aggiornamenti ai client)
+                    out.println(message);//mando la lista al client (implementare aggiornamenti alla lista e invio di tali aggiornamenti ai client)
                     
                     while(true){//aggiungere condizione di uscita
-                        message = name+": "+in.readLine();//leggo un messaggio
-                        System.out.println(message);//stmpo a video
+                        message = name+"<message>"+in.readLine()+"</message>";//leggo un messaggio
+                        System.out.println(message);//stampo a video
+                        
+                        
+                        
                         
                         for (Connect conection : conections) {//lo mando a tutti i client connesi attraverso la lista delle classi conection
                             conection.print(message);
