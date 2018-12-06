@@ -113,10 +113,6 @@ class Connect extends Thread {
 
                 }
 
-//                    out.flush(); da implementare
-//                    out.close();
-//                    in.close();
-//                    client.close();
             } catch (IOException ex) {
                 Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
                 closeConection();
