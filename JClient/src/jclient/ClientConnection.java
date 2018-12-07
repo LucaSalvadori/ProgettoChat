@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +31,7 @@ import org.xml.sax.SAXException;
  */
 public class ClientConnection {
 
-    protected ClientFrame cf;
+    protected ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
 
     private BufferedReader in;
     private PrintStream out;
@@ -37,11 +39,21 @@ public class ClientConnection {
     private Thread Tr;
     private String name;
 
+    private ArrayList<String> onlineHost;
+
     public ClientConnection(ClientFrame cf) {
         this.cf = cf;
+        onlineHost = new ArrayList();
     }
 
-    public void startConnection(String IP, int port, String hostName) { //defaul localhost 4000
+    /**
+     *
+     * @param IP
+     * @param port
+     * @param hostName
+     * @return true if the connection has been established
+     */
+    public boolean startConnection(String IP, int port, String hostName) { //defaul localhost 4000
 
         name = hostName;
         try {
@@ -54,7 +66,7 @@ public class ClientConnection {
 
             out.println("<root><name>" + name + "</name></root>");//send to the server the hostname
 
-            Tr = new Thread(new reader(in));//creo e avvio un tread responsabile della lettura
+            Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
 
             //per Test da console
@@ -64,29 +76,46 @@ public class ClientConnection {
 //                String mess = s.nextLine();
 //
 //                if (mess.equals("/close")) {//comando per chiudere il client
-//                    closeConection();
+//                    closeConection(0);
 //                    return;//interromo l'esecuzione (non elegante)
 //                }
 //                brodcastMessage(mess);//mando quello in input da console
+            return true;
 //            }
-
-
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 
+    /**
+     *send a message in broadcast to all the host
+     * @param message
+     */
     public void brodcastMessage(String message) {
         sendMessage(message, "");//se l'host è vuoto va in brodcast
     }
 
+    /**
+     *
+     * @param message text to send to the server
+     * @param Host name of the host of destination (if name is "" the message will be broadcasted)
+     */
     public void sendMessage(String message, String Host) {
         out.println("<root><message to='" + Host + "'>" + message + "</message></root>");//mando messaggio all'host indicato
     }
 
-    public void closeConection() {
+    /**
+     *
+     * @param state 0 closing by the host 1 closing by the server -1 closing for
+     * error
+     *
+     */
+    public void closeConection(int state) {
         try {
-            out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+            if (state != 1) {
+                out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+            }
             Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
             out.close();//chiudo il resto
             in.close();
@@ -96,19 +125,23 @@ public class ClientConnection {
         }
     }
 
+    public ArrayList<String> getOnlineHost() {
+        return onlineHost;
+    }
+
     public static class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
 
-        BufferedReader in;
+        ClientConnection cc;
 
-        public reader(BufferedReader in) {
-            this.in = in;
+        public reader(ClientConnection cc) {
+            this.cc = cc;
         }
 
         @Override
         public void run() {
             while (true) {
                 try {
-                    String messaggio = in.readLine();
+                    String messaggio = cc.in.readLine();
                     System.out.println("Messaggio ricevuto: " + messaggio);
                     try {
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -132,8 +165,12 @@ public class ClientConnection {
 
                                 NodeList ListaHost = eElement.getElementsByTagName("name");//prendo la lista degli host
 
+                                cc.onlineHost.clear();//pulisco la lista degli host online
+
                                 for (int i = 0; i < ListaHost.getLength(); i++) {//la scorro
-                                    System.out.println(ListaHost.item(i).getTextContent());//stampo host
+                                    //System.out.println(ListaHost.item(i).getTextContent());//stampo host
+                                    cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli hos alla lista
+                                    //aggiungere update form
                                 }
                             }
 
@@ -141,11 +178,12 @@ public class ClientConnection {
                             if (campiFigli != null) {//se è presente un messaggio
                                 System.out.println(campiFigli.getTextContent());//stampo messaggio
                                 System.out.println(campiFigli.getAttributes().getNamedItem("name"));//stampo nome
+
                             }
 
-                            campiFigli = d.getElementsByTagName("closing").item(0);
+                            campiFigli = d.getElementsByTagName("close").item(0);
                             if (campiFigli != null) {//se è presente una richiesta di chiusura
-                                //da aggiungere un metodo di chiusura
+                                cc.closeConection(1);
                             }
                         }
                     } catch (ParserConfigurationException ex) {

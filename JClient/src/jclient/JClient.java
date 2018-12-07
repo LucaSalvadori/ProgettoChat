@@ -36,7 +36,7 @@ public class JClient {
         cc.startConnection("localhost", 4000, ("Host"+((int)(Math.random()*10))));
         
         cc.brodcastMessage("prova");
-        cc.closeConection();
+        cc.closeConection(0);
     }
 
 }
