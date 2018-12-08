@@ -30,7 +30,7 @@ class Connect extends Thread {
     private BufferedReader in = null;
     private PrintStream out = null;
     private String host;
-    private String name = "notSet";
+    private String name;
     private Server s;
 
     public void print(String message) {
@@ -65,12 +65,13 @@ class Connect extends Thread {
         while (true) {
             try {
                 out.println("Hello");
+                name = "notSet " + conections.size();
 
 //                name = in.readLine();//leggo l'hostname
 //                updateHostList();
                 while (true) {//aggiungere condizione di uscita
                     try {
-
+                        
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
                         InputSource is = new InputSource(new StringReader(in.readLine()));
@@ -87,20 +88,35 @@ class Connect extends Thread {
 
                             Node campiFigli = d.getElementsByTagName("name").item(0);
                             if (campiFigli != null) {//se mi manda il suo hostname
-                                name = campiFigli.getTextContent();
+                                String tmp = campiFigli.getTextContent();
+
+                                for (Connect c : conections) {
+                                    if (c.getHostName().equals(tmp)) {
+                                        System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                                    }
+                                }
+                                name = tmp;
                                 updateHostList();
                             }
 
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se mi manda un messaggio
                                 message = "<root>" + "<message " + "name='" + name + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
-                                System.out.println(message);//stampo a video
-                                sendToAll(message);
+                                System.out.println("Message: " + message);//stampo a video
+                                String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
+                                System.out.println("From: " + name);//stampo a video
+                                System.out.println("To: " + to);//stampo a video
+
+                                if (to.equals("")) {
+                                    sendToAll(message); //se è in brodcast
+                                } else {
+                                    sendTo(to, message);
+                                }
                             }
 
                             campiFigli = d.getElementsByTagName("close").item(0);
                             if (campiFigli != null) {//se mi manda un messaggio
-                                System.out.println("Closing conection "+name+"...");
+                                System.out.println("Closing conection " + name + "...");
                                 closeConection();
                                 return;
                             }
@@ -109,6 +125,8 @@ class Connect extends Thread {
                     } catch (ParserConfigurationException ex) {
                     } catch (SAXException ex) {
                         Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
+                        System.out.println("Message not well formatted");
                     }
 
                 }
@@ -133,9 +151,16 @@ class Connect extends Thread {
     }
 
     public void sendToAll(String message) {
-        for (Connect conection : conections) {//lo mando a tutti i client connesi attraverso la lista delle classi conection
+        conections.forEach((conection) -> {
+            //lo mando a tutti i client connesi attraverso la lista delle classi conection
             conection.print(message);
-        }
+        });
+    }
+
+    public void sendTo(String Host, String message) {
+        conections.stream().filter((c) -> (c.getHostName().equalsIgnoreCase(Host))).forEachOrdered((c) -> {
+            c.print(message);
+        });
     }
 
     public synchronized void closeConection() {

@@ -9,19 +9,8 @@ package jclient;
  *
  * @author luca
  */
-import java.io.*;
-import java.net.*;
+
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class JClient {
 
@@ -31,11 +20,20 @@ public class JClient {
      */
     public static void main(String[] args) {
         
-        ClientConnection cc = new ClientConnection(new ClientFrame());
         
-        cc.startConnection("localhost", 4000, ("Host"+((int)(Math.random()*10))));
-        
+        //test
+        Scanner s = new Scanner(System.in);
+
+        ClientConnection cc = new ClientConnection(null);
+
+        cc.startConnection("localhost", 4000, ("Host" + ((int) (Math.random() * 10))));
+
         cc.brodcastMessage("prova");
+        for (int i = 0; i < 5; i++) {
+            System.out.print("Send test Message to :");
+            cc.sendMessage("test", s.nextLine());
+        }
+
         cc.closeConection(0);
     }
 

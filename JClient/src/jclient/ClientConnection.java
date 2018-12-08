@@ -12,8 +12,6 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -39,11 +37,14 @@ public class ClientConnection {
     private Thread Tr;
     private String name;
 
+    private boolean conectionOpened;//is the conection opened
+
     private ArrayList<String> onlineHost;
 
     public ClientConnection(ClientFrame cf) {
         this.cf = cf;
         onlineHost = new ArrayList();
+        conectionOpened = false;
     }
 
     /**
@@ -60,7 +61,7 @@ public class ClientConnection {
             socket = new Socket(IP, port);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintStream(socket.getOutputStream());
-
+            conectionOpened = true;
             String messaggio = in.readLine();//messaggio di hello
             System.out.println("Messaggio ricevuto: " + messaggio);
 
@@ -84,25 +85,36 @@ public class ClientConnection {
 //            }
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
+            conectionOpened = false;
             return false;
         }
     }
 
     /**
-     *send a message in broadcast to all the host
+     * send a message in broadcast to all the host
+     *
      * @param message
      */
     public void brodcastMessage(String message) {
-        sendMessage(message, "");//se l'host è vuoto va in brodcast
+        if (conectionOpened) {
+            sendMessage(message, "");//se l'host è vuoto va in brodcast
+        }
+    }
+
+    public boolean isConectionOpened() {
+        return conectionOpened;
     }
 
     /**
      *
      * @param message text to send to the server
-     * @param Host name of the host of destination (if name is "" the message will be broadcasted)
+     * @param Host name of the host of destination (if name is "" the message
+     * will be broadcasted)
      */
     public void sendMessage(String message, String Host) {
-        out.println("<root><message to='" + Host + "'>" + message + "</message></root>");//mando messaggio all'host indicato
+        if (conectionOpened) {
+            out.println("<root><message to='" + Host + "'>" + message + "</message></root>");//mando messaggio all'host indicato
+        }
     }
 
     /**
@@ -112,17 +124,22 @@ public class ClientConnection {
      *
      */
     public void closeConection(int state) {
-        try {
-            if (state != 1) {
-                out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+        if (conectionOpened) {
+            try {
+                conectionOpened = false;
+                if (state == 0) {
+                    out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+                }
+                Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
+                out.close();//chiudo il resto
+                in.close();
+                socket.close();
+
+            } catch (IOException ex) {
+                Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
-            out.close();//chiudo il resto
-            in.close();
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     public ArrayList<String> getOnlineHost() {
@@ -139,7 +156,7 @@ public class ClientConnection {
 
         @Override
         public void run() {
-            while (true) {
+            while (cc.isConectionOpened()) {
                 try {
                     String messaggio = cc.in.readLine();
                     System.out.println("Messaggio ricevuto: " + messaggio);
@@ -192,6 +209,9 @@ public class ClientConnection {
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
+                    cc.closeConection(-1);
+                } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
+                    System.out.println("Message not well formatted. NullPointerException: " + e);
                 }
             }
         }
