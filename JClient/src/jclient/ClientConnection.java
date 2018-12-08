@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  */
 public class ClientConnection {
 
-    protected ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
+    protected static ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
 
     private BufferedReader in;
     private PrintStream out;
@@ -54,7 +54,7 @@ public class ClientConnection {
      * @param hostName
      * @return true if the connection has been established
      */
-    public boolean startConnection(String IP, int port, String hostName) { //defaul localhost 4000
+    public boolean startConnection(String IP, int port, String hostName) { //default localhost 4000
 
         name = hostName;
         try {
@@ -62,27 +62,27 @@ public class ClientConnection {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintStream(socket.getOutputStream());
             conectionOpened = true;
-            String messaggio = in.readLine();//messaggio di hello
-            System.out.println("Messaggio ricevuto: " + messaggio);
-
-            out.println("<root><name>" + name + "</name></root>");//send to the server the hostname
+            
+            in.readLine();//legge messaggio di hello
+            
+            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
+            
+            String messaggioAccept = in.readLine();//Messaggio di accept/refuse
+            
+            switch(messaggioAccept){
+                case "0":
+                    cf.printMessage("Connesso al server");
+                    break;
+                case "1":
+                    cf.printMessage("Connessione negata: Nome client già in uso");
+                    return false;
+            }
+            
+            
 
             Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
-
-            //per Test da console
-//            Scanner s = new Scanner(System.in);
-//
-//            while (true) {//aggiungere condizione di uscita
-//                String mess = s.nextLine();
-//
-//                if (mess.equals("/close")) {//comando per chiudere il client
-//                    closeConection(0);
-//                    return;//interromo l'esecuzione (non elegante)
-//                }
-//                brodcastMessage(mess);//mando quello in input da console
             return true;
-//            }
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
             conectionOpened = false;
@@ -159,7 +159,7 @@ public class ClientConnection {
             while (cc.isConectionOpened()) {
                 try {
                     String messaggio = cc.in.readLine();
-                    System.out.println("Messaggio ricevuto: " + messaggio);
+                    System.out.println("DEBUG: Messaggio ricevuto: " + messaggio);
                     try {
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -171,10 +171,6 @@ public class ClientConnection {
                         if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
                             NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
 
-                            for (int i = 0; i < CampiMessagio.getLength(); i++) {
-                                System.out.println(CampiMessagio.item(i).toString());
-                            }
-
                             Node campiFigli = d.getElementsByTagName("host").item(0);
                             if (campiFigli != null) {//se è presente la lista degli host
 
@@ -185,16 +181,14 @@ public class ClientConnection {
                                 cc.onlineHost.clear();//pulisco la lista degli host online
 
                                 for (int i = 0; i < ListaHost.getLength(); i++) {//la scorro
-                                    //System.out.println(ListaHost.item(i).getTextContent());//stampo host
-                                    cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli hos alla lista
-                                    //aggiungere update form
+                                    cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli host alla lista
+                                    cf.updateOnlineHosts(); //Chiamo il metodo che aggiorna la lista host online nel ClientFrame
                                 }
                             }
 
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se è presente un messaggio
-                                System.out.println(campiFigli.getTextContent());//stampo messaggio
-                                System.out.println(campiFigli.getAttributes().getNamedItem("name"));//stampo nome
+                                cf.printMessage(campiFigli.getAttributes().getNamedItem("name") + ": " + campiFigli.getTextContent());
 
                             }
 

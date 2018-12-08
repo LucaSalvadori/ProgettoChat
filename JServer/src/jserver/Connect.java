@@ -67,8 +67,6 @@ class Connect extends Thread {
                 out.println("Hello");
                 name = "notSet " + conections.size();
 
-//                name = in.readLine();//leggo l'hostname
-//                updateHostList();
                 while (true) {//aggiungere condizione di uscita
                     try {
                         
@@ -82,19 +80,23 @@ class Connect extends Thread {
                         if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
                             NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
 
+                            /* DEBUG (STAMPA MESSAGGIO COMPLETO)
                             for (int i = 0; i < CampiMessagio.getLength(); i++) {
                                 System.out.println(CampiMessagio.item(i).toString());
-                            }
+                            }*/
 
                             Node campiFigli = d.getElementsByTagName("name").item(0);
-                            if (campiFigli != null) {//se mi manda il suo hostname
+                            if (campiFigli != null) {//se mi manda il suo hostname (primo collegamento)
                                 String tmp = campiFigli.getTextContent();
 
                                 for (Connect c : conections) {
                                     if (c.getHostName().equals(tmp)) {
-                                        System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                                        s.printMessage(tmp +" si è connesso con lo stesso nome di un utente già online.");
+                                        out.println("1");
+                                        closeConection();
                                     }
                                 }
+                                out.println("0");
                                 name = tmp;
                                 updateHostList();
                             }
@@ -102,13 +104,11 @@ class Connect extends Thread {
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se mi manda un messaggio
                                 message = "<root>" + "<message " + "name='" + name + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
-                                System.out.println("Message: " + message);//stampo a video
                                 String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
-                                System.out.println("From: " + name);//stampo a video
-                                System.out.println("To: " + to);//stampo a video
+                                s.printMessage("From: " + name + " | To: " + to + " | Message: " + message);//Stampo a video il messaggio
 
                                 if (to.equals("")) {
-                                    sendToAll(message); //se è in brodcast
+                                    sendToAll(message); //se è in brodcast lo mando a tutti
                                 } else {
                                     sendTo(to, message);
                                 }
@@ -116,7 +116,7 @@ class Connect extends Thread {
 
                             campiFigli = d.getElementsByTagName("close").item(0);
                             if (campiFigli != null) {//se mi manda un messaggio
-                                System.out.println("Closing conection " + name + "...");
+                                s.printMessage("Closing conection with client " + name + "...");
                                 closeConection();
                                 return;
                             }
@@ -126,7 +126,7 @@ class Connect extends Thread {
                     } catch (SAXException ex) {
                         Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
-                        System.out.println("Message not well formatted");
+                        s.printMessage("Message not well formatted");
                     }
 
                 }
