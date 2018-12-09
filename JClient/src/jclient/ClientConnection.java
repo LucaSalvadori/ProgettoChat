@@ -65,23 +65,10 @@ public class ClientConnection {
             
             in.readLine();//legge messaggio di hello
             
-            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
-            
-            String messaggioAccept = in.readLine();//Messaggio di accept/refuse
-            
-            switch(messaggioAccept){
-                case "0":
-                    cf.printMessage("Connesso al server");
-                    break;
-                case "1":
-                    cf.printMessage("Connessione negata: Nome client già in uso");
-                    return false;
-            }
-            
-            
-
             Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
+            
+            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
             return true;
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -119,7 +106,7 @@ public class ClientConnection {
 
     /**
      *
-     * @param state 0 closing by the host 1 closing by the server -1 closing for
+     * @param state 0 closing by the client, 1 closing by the server, -1 closing for
      * error
      *
      */
@@ -128,7 +115,8 @@ public class ClientConnection {
             try {
                 conectionOpened = false;
                 if (state == 0) {
-                    out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+                    out.println("<root><connection>close</connection></root>");//mando il messaggio per chiudere la parte server
+                    cf.printMessage("Connessione al server chiusa");
                 }
                 Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
                 out.close();//chiudo il resto
@@ -145,7 +133,7 @@ public class ClientConnection {
     public ArrayList<String> getOnlineHost() {
         return onlineHost;
     }
-
+    
     public static class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
 
         ClientConnection cc;
@@ -170,8 +158,26 @@ public class ClientConnection {
 
                         if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
                             NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
+                            
+                            Node campiFigli = d.getElementsByTagName("connection").item(0);
+                            if(campiFigli != null){//se è presente un messaggio di gestione connessione
+                                
+                                switch (campiFigli.getTextContent()){
+                                case "accepted":
+                                    cf.printMessage("Connesso al server");
+                                    break;
+                                case "refused":
+                                    cf.printMessage("Connessione negata. Motivazione: " + d.getElementsByTagName("reason").item(0).getTextContent());
+                                    cc.closeConection(-1);
+                                    break;
+                                case "close":
+                                    cf.printMessage("Connessione chiusa dal server");
+                                    cc.closeConection(1);
+                                    break;
+                                }
+                            }
 
-                            Node campiFigli = d.getElementsByTagName("host").item(0);
+                            campiFigli = d.getElementsByTagName("host").item(0);
                             if (campiFigli != null) {//se è presente la lista degli host
 
                                 Element eElement = (campiFigli.getNodeType() == Node.ELEMENT_NODE) ? (Element) campiFigli : null;
@@ -190,11 +196,6 @@ public class ClientConnection {
                             if (campiFigli != null) {//se è presente un messaggio
                                 cf.printMessage(campiFigli.getAttributes().getNamedItem("name") + ": " + campiFigli.getTextContent());
 
-                            }
-
-                            campiFigli = d.getElementsByTagName("close").item(0);
-                            if (campiFigli != null) {//se è presente una richiesta di chiusura
-                                cc.closeConection(1);
                             }
                         }
                     } catch (ParserConfigurationException ex) {

@@ -5,8 +5,6 @@
  */
 package jclient;
 
-import java.util.ArrayList;
-import javax.swing.ListModel;
 
 /**
  *
@@ -22,7 +20,7 @@ public final class ClientFrame extends javax.swing.JFrame {
     public ClientFrame() {
         initComponents();
         cc = new ClientConnection(this);
-        cc.startConnection("localhost", 4000, ("Host " + ((int) (Math.random() * 10))));
+        cc.startConnection("localhost", 4000, ("Host 1"/* + ((int) (Math.random() * 10))*/));
     }
     
     public void updateOnlineHosts(){
@@ -50,6 +48,7 @@ public final class ClientFrame extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         JListHosts = new javax.swing.JList<>();
         checkBroadcast = new java.awt.Checkbox();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,16 +72,19 @@ public final class ClientFrame extends javax.swing.JFrame {
 
         checkBroadcast.setLabel("Broadcast message");
 
+        jButton1.setText("Chiudi connessione");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jTextFieldMessage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonSend)
@@ -94,7 +96,15 @@ public final class ClientFrame extends javax.swing.JFrame {
                                 .addGap(10, 10, 10)
                                 .addComponent(checkBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jTextFieldMessage))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -113,7 +123,9 @@ public final class ClientFrame extends javax.swing.JFrame {
                 .addComponent(jTextFieldMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSend)
-                .addGap(63, 63, 63))
+                .addGap(19, 19, 19)
+                .addComponent(jButton1)
+                .addGap(21, 21, 21))
         );
 
         pack();
@@ -130,6 +142,10 @@ public final class ClientFrame extends javax.swing.JFrame {
         jTextFieldMessage.setText("");
         
     }//GEN-LAST:event_jButtonSendActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        cc.closeConection(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -172,6 +188,7 @@ public final class ClientFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> JListHosts;
     private java.awt.Checkbox checkBroadcast;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonSend;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
