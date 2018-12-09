@@ -20,7 +20,7 @@ public final class ClientFrame extends javax.swing.JFrame {
     public ClientFrame() {
         initComponents();
         cc = new ClientConnection(this);
-        cc.startConnection("localhost", 4000, ("Host 1"/* + ((int) (Math.random() * 10))*/));
+        cc.startConnection("localhost", 4000, ("Host " + ((int) (Math.random() * 10))));
     }
     
     public void updateOnlineHosts(){
