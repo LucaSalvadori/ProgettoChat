@@ -147,13 +147,15 @@ public class ClientConnection {
         return onlineHost;
     }
 
-    public static class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
+    public class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
 
         ClientConnection cc;
 
         public reader(ClientConnection cc) {
             this.cc = cc;
         }
+        
+        
 
         @Override
         public void run() {
@@ -189,6 +191,8 @@ public class ClientConnection {
                                     //System.out.println(ListaHost.item(i).getTextContent());//stampo host
                                     cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli hos alla lista
                                     //aggiungere update form
+                                    cf.updateRooms();
+                                    
                                 }
                             }
 
@@ -196,7 +200,7 @@ public class ClientConnection {
                             if (campiFigli != null) {//se è presente un messaggio
                                 System.out.println(campiFigli.getTextContent());//stampo messaggio
                                 System.out.println(campiFigli.getAttributes().getNamedItem("name"));//stampo nome
-
+                                cf.addMessageIn(campiFigli.getTextContent(), campiFigli.getAttributes().getNamedItem("name").getTextContent(), false);
                             }
 
                             campiFigli = d.getElementsByTagName("close").item(0);
