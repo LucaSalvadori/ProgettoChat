@@ -13,14 +13,13 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="MainContainer" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="provajavafx.FXMLController">
    <center>
       <SplitPane dividerPositions="0.30434782608695654" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <ScrollPane centerShape="false" fitToWidth="true" hmin="100.0" pannable="true" scaleShape="false" vbarPolicy="ALWAYS">
                <content>
-                  <VBox accessibleText="ContactList" alignment="TOP_RIGHT" prefWidth="166.0">
+                  <VBox fx:id="ContactContainer" accessibleText="ContactList" alignment="TOP_RIGHT" prefWidth="166.0">
                      <children>
                         <HBox accessibleText="Contact" alignment="CENTER_LEFT" focusTraversable="true" nodeOrientation="LEFT_TO_RIGHT" spacing="3.0" VBox.vgrow="ALWAYS">
                            <children>
@@ -69,11 +68,11 @@
                <items>
                   <ScrollPane hbarPolicy="NEVER">
                      <content>
-                        <VBox accessibleText="MessagePane">
+                        <VBox fx:id="MessageContainer" accessibleText="MessagePane">
                            <children>
-                              <HBox>
+                              <HBox fx:id="MessageBubbleContaner">
                                  <children>
-                                    <TextArea disable="true" editable="false" focusTraversable="false" prefHeight="80.0" prefWidth="308.0" HBox.hgrow="ALWAYS">
+                                    <TextArea fx:id="MessageTxt" disable="true" editable="false" focusTraversable="false" prefHeight="80.0" prefWidth="308.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
@@ -87,8 +86,8 @@
                   </ScrollPane>
                   <HBox spacing="5.0">
                      <children>
-                        <TextArea prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" text="Send &gt;" />
+                        <TextArea fx:id="TxtSendMessage" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="BuSend" mnemonicParsing="false" text="Send &gt;" onAction="#Test"/>
                      </children>
                      <padding>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

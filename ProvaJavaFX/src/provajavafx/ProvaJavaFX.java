@@ -49,7 +49,7 @@ public class ProvaJavaFX extends Application {
       
       Parent root = FXMLLoader.load(getClass().getResource("FXML.fxml"));
       primaryStage.setTitle("ProvaChat");
-      primaryStage.setScene(new Scene(root,600,400));
+      primaryStage.setScene(new Scene(root));
       primaryStage.show();
         
     }
