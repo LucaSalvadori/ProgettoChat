@@ -5,6 +5,10 @@
  */
 package jclient;
 
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 /**
  *
  * @author LS_Fisso
@@ -29,77 +33,32 @@ public class ClientFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPaneContact = new javax.swing.JScrollPane();
         jSplitPane3 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPaneMessage = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
+        jPanelMessageSend = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        jTextAreaMessageSend = new javax.swing.JTextArea();
+        jButtonSend = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane1.setDividerLocation(200);
+        jSplitPane1.setDividerLocation(230);
         jSplitPane1.setDividerSize(4);
 
-        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel1.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
-        jLabel1.setText("Test 1");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(436, Short.MAX_VALUE))
-        );
-
-        jScrollPane3.setViewportView(jPanel2);
-
-        jSplitPane1.setLeftComponent(jScrollPane3);
+        jScrollPaneContact.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jSplitPane1.setLeftComponent(jScrollPaneContact);
 
         jSplitPane3.setDividerLocation(410);
         jSplitPane3.setDividerSize(3);
         jSplitPane3.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setToolTipText("");
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 100));
-        jSplitPane3.setTopComponent(jScrollPane1);
+        jScrollPaneMessage.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPaneMessage.setToolTipText("");
+        jScrollPaneMessage.setMinimumSize(new java.awt.Dimension(23, 100));
+        jSplitPane3.setTopComponent(jScrollPaneMessage);
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -107,41 +66,41 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jSplitPane3.setRightComponent(jScrollPane2);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(1);
-        jScrollPane4.setViewportView(jTextArea2);
+        jTextAreaMessageSend.setColumns(20);
+        jTextAreaMessageSend.setRows(1);
+        jScrollPane4.setViewportView(jTextAreaMessageSend);
 
-        jButton1.setText("Send");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSend.setText("Send");
+        jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonSendActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelMessageSendLayout = new javax.swing.GroupLayout(jPanelMessageSend);
+        jPanelMessageSend.setLayout(jPanelMessageSendLayout);
+        jPanelMessageSendLayout.setHorizontalGroup(
+            jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(jButtonSend)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanelMessageSendLayout.setVerticalGroup(
+            jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jButton1)
+                .addComponent(jButtonSend)
                 .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane4)
                 .addContainerGap())
         );
 
-        jSplitPane3.setRightComponent(jPanel1);
+        jSplitPane3.setRightComponent(jPanelMessageSend);
 
         jSplitPane1.setBottomComponent(jSplitPane3);
 
@@ -159,10 +118,10 @@ public class ClientFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
         // TODO add your handling code here:
         addContact();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonSendActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,62 +159,139 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     private void addContact() {
-        javax.swing.JPanel ContactBar= new javax.swing.JPanel();
-        ContactBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        ContactBar.setToolTipText("");
+        paneContact = new javax.swing.JPanel();
+        jLabelContact = new javax.swing.JLabel();
+        jLabelContactBroadcast = new javax.swing.JLabel();
+        jPanelContact = new javax.swing.JPanel();
+        jPanelContactBroadcast = new javax.swing.JPanel();
         
-        javax.swing.JLabel LabelContact = new javax.swing.JLabel();;
-        LabelContact.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
-        LabelContact.setText("Test");
+        JPanel jPanelContact2 = new javax.swing.JPanel();
+        JLabel jLabelContact2 = new javax.swing.JLabel();
 
-        javax.swing.GroupLayout ContactBarBroadcastLayout = new javax.swing.GroupLayout(ContactBar);
-        ContactBar.setLayout(ContactBarBroadcastLayout);
-        ContactBarBroadcastLayout.setHorizontalGroup(
-            ContactBarBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContactBarBroadcastLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(LabelContact, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                .addContainerGap())
+        paneContact.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        
+        
+        jPanelContactBroadcast.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabelContactBroadcast.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
+        jLabelContactBroadcast.setText("Test 1");
+
+        javax.swing.GroupLayout jPanelContactBroadcastLayout = new javax.swing.GroupLayout(jPanelContactBroadcast);
+        jPanelContactBroadcast.setLayout(jPanelContactBroadcastLayout);
+        jPanelContactBroadcastLayout.setHorizontalGroup(
+                jPanelContactBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelContactBroadcastLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabelContactBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanelContactBroadcastLayout.setVerticalGroup(
+                jPanelContactBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactBroadcastLayout.createSequentialGroup()
+                                .addComponent(jLabelContactBroadcast)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jPanelContact.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabelContact.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
+        jLabelContact.setText("Cont1");
+
+        javax.swing.GroupLayout jPanelContactLayout = new javax.swing.GroupLayout(jPanelContact);
+        jPanelContact.setLayout(jPanelContactLayout);
+        jPanelContactLayout.setHorizontalGroup(
+                jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelContactLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabelContact, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(117, Short.MAX_VALUE))
+        );
+        jPanelContactLayout.setVerticalGroup(
+                jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactLayout.createSequentialGroup()
+                                .addComponent(jLabelContact)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
         
-        ContactBarBroadcastLayout.setVerticalGroup(
-            ContactBarBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContactBarBroadcastLayout.createSequentialGroup()
-                .addComponent(LabelContact)
-                .addGap(0, 0, Short.MAX_VALUE))
+        
+        
+        jPanelContact2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabelContact2.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
+        jLabelContact2.setText("Cont2");
+
+        javax.swing.GroupLayout jPanelContact2Layout = new javax.swing.GroupLayout(jPanelContact2);
+        jPanelContact2.setLayout(jPanelContact2Layout);
+        jPanelContact2Layout.setHorizontalGroup(
+                jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelContact2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabelContact2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(117, Short.MAX_VALUE))
+        );
+        jPanelContact2Layout.setVerticalGroup(
+                jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContact2Layout.createSequentialGroup()
+                                .addComponent(jLabelContact2)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
         
-        javax.swing.GroupLayout ContactPanelLayout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(ContactPanelLayout);
-        ContactPanelLayout.setHorizontalGroup(
-            ContactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-            .addComponent(ContactBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+        javax.swing.GroupLayout paneContactLayout = new javax.swing.GroupLayout(paneContact);
+        
+        paneContact.setLayout(paneContactLayout);
+        
+        GroupLayout.ParallelGroup HParallelGroup = paneContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
+        
+        HParallelGroup.addGroup(paneContactLayout.createSequentialGroup()
+                                .addComponent(jPanelContact, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(0, 0, 0)
         );
-        ContactPanelLayout.setVerticalGroup(
-            ContactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-            .addGroup(ContactPanelLayout.createSequentialGroup()
-                .addComponent(ContactBar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 447, Short.MAX_VALUE))
+        
+        HParallelGroup.addGroup(paneContactLayout.createSequentialGroup()
+                                .addComponent(jPanelContact2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(0, 0, 0)
         );
         
-        //ContactPanel.add(ContactBar);
+        
+        HParallelGroup.addComponent(jPanelContactBroadcast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+        paneContactLayout.setHorizontalGroup(HParallelGroup);
         
         
+        GroupLayout.SequentialGroup vSequentialGroup = paneContactLayout.createSequentialGroup();
+        vSequentialGroup.addComponent(jPanelContactBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE);
+        vSequentialGroup.addGap(0, 0, 0);
+        vSequentialGroup.addComponent(jPanelContact, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE);
+         vSequentialGroup.addComponent(jPanelContact2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE);
+        vSequentialGroup.addContainerGap(389, Short.MAX_VALUE);
+        
+        paneContactLayout.setVerticalGroup(
+                paneContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(vSequentialGroup)
+        );
+        
+        
+
+        jScrollPaneContact.setViewportView(paneContact);
+
     }
 
+    private javax.swing.JLabel jLabelContact;
+    private javax.swing.JLabel jLabelContactBroadcast;
+    private javax.swing.JPanel jPanelContact;
+    private javax.swing.JPanel jPanelContactBroadcast;
+    private javax.swing.JPanel paneContact;
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jButtonSend;
+    private javax.swing.JPanel jPanelMessageSend;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPaneContact;
+    private javax.swing.JScrollPane jScrollPaneMessage;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextAreaMessageSend;
     // End of variables declaration//GEN-END:variables
 }
