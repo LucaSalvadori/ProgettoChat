@@ -40,6 +40,7 @@ public class ClientConnection {
     private boolean conectionOpened;//is the conection opened
 
     private ArrayList<String> onlineHost;
+    
 
     public ClientConnection(ClientFrame cf) {
         this.cf = cf;

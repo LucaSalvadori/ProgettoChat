@@ -5,9 +5,11 @@
  */
 package jclient;
 
+import java.awt.Color;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,6 +22,12 @@ public class ClientFrame extends javax.swing.JFrame {
      */
     public ClientFrame() {
         initComponents();
+        addContact("broadCast");
+
+        addContact("Matteo");
+
+        getRoom("broadCast").addMessage(getMessageIN("Ciao come ti va?"), "in");
+        getRoom("broadCast").addMessage(getMessageOut("Bene e tu?"), "out");
 
     }
 
@@ -36,14 +44,13 @@ public class ClientFrame extends javax.swing.JFrame {
         jScrollPaneContact = new javax.swing.JScrollPane();
         jSplitPane3 = new javax.swing.JSplitPane();
         jScrollPaneMessage = new javax.swing.JScrollPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jPanelMessageSend = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextAreaMessageSend = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Chat");
 
         jSplitPane1.setDividerLocation(230);
         jSplitPane1.setDividerSize(4);
@@ -60,17 +67,21 @@ public class ClientFrame extends javax.swing.JFrame {
         jScrollPaneMessage.setMinimumSize(new java.awt.Dimension(23, 100));
         jSplitPane3.setTopComponent(jScrollPaneMessage);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        jScrollPane4.setEnabled(false);
 
-        jSplitPane3.setRightComponent(jScrollPane2);
-
+        jTextAreaMessageSend.setEditable(false);
         jTextAreaMessageSend.setColumns(20);
         jTextAreaMessageSend.setRows(1);
+        jTextAreaMessageSend.setEnabled(false);
+        jTextAreaMessageSend.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextAreaMessageSendKeyTyped(evt);
+            }
+        });
         jScrollPane4.setViewportView(jTextAreaMessageSend);
 
         jButtonSend.setText("Send");
+        jButtonSend.setEnabled(false);
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendActionPerformed(evt);
@@ -91,12 +102,12 @@ public class ClientFrame extends javax.swing.JFrame {
         jPanelMessageSendLayout.setVerticalGroup(
             jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMessageSendLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jButtonSend)
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4)
+                .addGroup(jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelMessageSendLayout.createSequentialGroup()
+                        .addComponent(jButtonSend)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4))
                 .addContainerGap())
         );
 
@@ -108,11 +119,11 @@ public class ClientFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
         );
 
         pack();
@@ -120,8 +131,26 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
         // TODO add your handling code here:
-        addContact();
+
+        currentChatRoom.addMessage(getMessageOut(jTextAreaMessageSend.getText()), "out");
+        jTextAreaMessageSend.setText("");
+        printMessageList(currentChatRoom);
+
+        //add network part
+
     }//GEN-LAST:event_jButtonSendActionPerformed
+
+    private void jTextAreaMessageSendKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextAreaMessageSendKeyTyped
+        if (jTextAreaMessageSend.getText().length() > 1) {
+            jButtonSend.setEnabled(true);
+        } else {
+            if (jTextAreaMessageSend.getText().isEmpty()) {
+                jButtonSend.setEnabled(evt.getKeyChar() != 8);
+            } else {
+                jButtonSend.setEnabled(true);
+            }
+        }
+    }//GEN-LAST:event_jTextAreaMessageSendKeyTyped
 
     /**
      * @param args the command line arguments
@@ -158,140 +187,289 @@ public class ClientFrame extends javax.swing.JFrame {
         });
     }
 
-    private void addContact() {
+    private void printMessageList(ChatRoom room) {
+        room.getContactBar().setBackground(Color.gray);
+        if (currentChatRoom != null) {
+            currentChatRoom.getContactBar().setBackground(Color.lightGray);
+        }
+        currentChatRoom = room;
+
+        JPanel jPanelMessaggeList = new javax.swing.JPanel();
+
+        javax.swing.GroupLayout jPanelMessaggeListLayout = new javax.swing.GroupLayout(jPanelMessaggeList);
+
+        jPanelMessaggeList.setLayout(jPanelMessaggeListLayout);
+        GroupLayout.ParallelGroup HParallelGroup = jPanelMessaggeListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
+
+        GroupLayout.SequentialGroup VSequentialGroup = jPanelMessaggeListLayout.createSequentialGroup();
+
+        for (Object[] objects : room.getMessagge()) {
+            if (((String) objects[1]).equals("in")) {
+                HParallelGroup.addComponent(((JPanel) objects[0]), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+                VSequentialGroup.addComponent(((JPanel) objects[0]), javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE);
+            }
+            if (((String) objects[1]).equals("out")) {
+                HParallelGroup.addComponent(((JPanel) objects[0]), javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+                VSequentialGroup.addComponent(((JPanel) objects[0]), javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE);
+            }
+        }
+
+        jPanelMessaggeListLayout.setHorizontalGroup(HParallelGroup);
+        jPanelMessaggeListLayout.setVerticalGroup(
+                jPanelMessaggeListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(VSequentialGroup)
+        );
+
+        jScrollPaneMessage.setViewportView(jPanelMessaggeList);
+
+    }
+
+    private JPanel getMessageOut(String text) {
+        int maxLenght = 30;
+        if (text.length() > maxLenght) { //if the string is too long
+            
+            
+            String[] s = text.split("\n");
+            text = "";
+            for (String l : s) {
+                if (l.length() > maxLenght) {
+                    String[] ls = l.split(" ");
+
+                    String nl = "";
+                    int le = 0;
+
+                    for (String w : ls) {
+                        if (w.length() > maxLenght) {
+                            String tmp = w.substring(0, maxLenght-1);
+                            int last = maxLenght;
+                            for (int j = maxLenght; j < w.length(); j++) {
+                                if (j+1 == w.length() || (j + 1) % maxLenght == 0) {
+                                    tmp += '\n' + w.substring(last, j);
+                                    last = j+1;
+                                }
+                            }
+                            
+                            le = 0;
+                            nl += '\n' + tmp;
+                            
+                        } else {
+                            if (le + w.length() <= maxLenght) {
+                                nl += ' '+w;
+                                le += w.length();
+                            } else {
+                                nl += '\n' + w;
+                                le = 0;
+                            }
+                        }
+                    }
+                    text += '\n' + nl;
+                }
+            }
+            
+            //System.out.println("jclient.ClientFrame.getMessageOut(): "+text);
+        }
+
+        JPanel jPanelMessageOut = new javax.swing.JPanel();
+        javax.swing.JTextArea jTextAreaMessageOut = new javax.swing.JTextArea();
+
+        jTextAreaMessageOut.setEditable(false);
+        jTextAreaMessageOut.setBackground(java.awt.SystemColor.inactiveCaption);
+        jTextAreaMessageOut.setColumns(20);
+        jTextAreaMessageOut.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jTextAreaMessageOut.setRows(5);
+        jTextAreaMessageOut.setText(text);
+        jTextAreaMessageOut.setToolTipText("");
+        jTextAreaMessageOut.setWrapStyleWord(true);
+        jTextAreaMessageOut.setAutoscrolls(false);
+
+        javax.swing.GroupLayout jPanelMessageOutLayout = new javax.swing.GroupLayout(jPanelMessageOut);
+        jPanelMessageOut.setLayout(jPanelMessageOutLayout);
+        jPanelMessageOutLayout.setHorizontalGroup(
+                jPanelMessageOutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelMessageOutLayout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextAreaMessageOut, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20))
+        );
+        jPanelMessageOutLayout.setVerticalGroup(
+                jPanelMessageOutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelMessageOutLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jTextAreaMessageOut, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+        return jPanelMessageOut;
+    }
+
+    private JPanel getMessageIN(String text) {
+        JPanel jPanelMessageInNEW = new javax.swing.JPanel();
+        javax.swing.JTextArea jTextAreaMessageInNEW = new javax.swing.JTextArea();
+
+        jTextAreaMessageInNEW.setEditable(false);
+        jTextAreaMessageInNEW.setBackground(new java.awt.Color(140, 175, 150));
+        jTextAreaMessageInNEW.setColumns(20);
+        jTextAreaMessageInNEW.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jTextAreaMessageInNEW.setRows(5);
+        jTextAreaMessageInNEW.setText(text);
+        jTextAreaMessageInNEW.setToolTipText("");
+
+        javax.swing.GroupLayout jPanelMessageInLayout = new javax.swing.GroupLayout(jPanelMessageInNEW);
+        jPanelMessageInNEW.setLayout(jPanelMessageInLayout);
+        jPanelMessageInLayout.setHorizontalGroup(jPanelMessageInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelMessageInLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jTextAreaMessageInNEW, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(103, Short.MAX_VALUE))
+        );
+        jPanelMessageInLayout.setVerticalGroup(jPanelMessageInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelMessageInLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jTextAreaMessageInNEW, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                        .addContainerGap())
+        );
+        return jPanelMessageInNEW;
+    }
+
+    private void addContact(String name) {
+        //contactList.add(getContactEl(name));
+        contacts.add(new ChatRoom(name, getContactEl(name)));
+
         paneContact = new javax.swing.JPanel();
-        jLabelContact = new javax.swing.JLabel();
-        jLabelContactBroadcast = new javax.swing.JLabel();
-        jPanelContact = new javax.swing.JPanel();
-        jPanelContactBroadcast = new javax.swing.JPanel();
-        
-        JPanel jPanelContact2 = new javax.swing.JPanel();
-        JLabel jLabelContact2 = new javax.swing.JLabel();
 
         paneContact.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        
-        
-        jPanelContactBroadcast.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabelContactBroadcast.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
-        jLabelContactBroadcast.setText("Test 1");
-
-        javax.swing.GroupLayout jPanelContactBroadcastLayout = new javax.swing.GroupLayout(jPanelContactBroadcast);
-        jPanelContactBroadcast.setLayout(jPanelContactBroadcastLayout);
-        jPanelContactBroadcastLayout.setHorizontalGroup(
-                jPanelContactBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelContactBroadcastLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabelContactBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanelContactBroadcastLayout.setVerticalGroup(
-                jPanelContactBroadcastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactBroadcastLayout.createSequentialGroup()
-                                .addComponent(jLabelContactBroadcast)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jPanelContact.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabelContact.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
-        jLabelContact.setText("Cont1");
-
-        javax.swing.GroupLayout jPanelContactLayout = new javax.swing.GroupLayout(jPanelContact);
-        jPanelContact.setLayout(jPanelContactLayout);
-        jPanelContactLayout.setHorizontalGroup(
-                jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelContactLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabelContact, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(117, Short.MAX_VALUE))
-        );
-        jPanelContactLayout.setVerticalGroup(
-                jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactLayout.createSequentialGroup()
-                                .addComponent(jLabelContact)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        
-        
-        
-        jPanelContact2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabelContact2.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
-        jLabelContact2.setText("Cont2");
-
-        javax.swing.GroupLayout jPanelContact2Layout = new javax.swing.GroupLayout(jPanelContact2);
-        jPanelContact2.setLayout(jPanelContact2Layout);
-        jPanelContact2Layout.setHorizontalGroup(
-                jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelContact2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabelContact2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(117, Short.MAX_VALUE))
-        );
-        jPanelContact2Layout.setVerticalGroup(
-                jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContact2Layout.createSequentialGroup()
-                                .addComponent(jLabelContact2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        
 
         javax.swing.GroupLayout paneContactLayout = new javax.swing.GroupLayout(paneContact);
-        
+
         paneContact.setLayout(paneContactLayout);
-        
+
         GroupLayout.ParallelGroup HParallelGroup = paneContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
-        
-        HParallelGroup.addGroup(paneContactLayout.createSequentialGroup()
-                                .addComponent(jPanelContact, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(0, 0, 0)
-        );
-        
-        HParallelGroup.addGroup(paneContactLayout.createSequentialGroup()
-                                .addComponent(jPanelContact2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(0, 0, 0)
-        );
-        
-        
-        HParallelGroup.addComponent(jPanelContactBroadcast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
-        paneContactLayout.setHorizontalGroup(HParallelGroup);
-        
-        
+
         GroupLayout.SequentialGroup vSequentialGroup = paneContactLayout.createSequentialGroup();
-        vSequentialGroup.addComponent(jPanelContactBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE);
-        vSequentialGroup.addGap(0, 0, 0);
-        vSequentialGroup.addComponent(jPanelContact, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE);
-         vSequentialGroup.addComponent(jPanelContact2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE);
-        vSequentialGroup.addContainerGap(389, Short.MAX_VALUE);
-        
+
+        for (ChatRoom contact : contacts) {
+            HParallelGroup.addGroup(paneContactLayout.createSequentialGroup()
+                    .addComponent(contact.getContactBar(), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(0, 0, 0)
+            );
+
+            vSequentialGroup.addComponent(contact.getContactBar(), javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE);
+        }
+        //vSequentialGroup.addContainerGap(389, Short.MAX_VALUE);
+
+        paneContactLayout.setHorizontalGroup(HParallelGroup);
+
         paneContactLayout.setVerticalGroup(
                 paneContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(vSequentialGroup)
         );
-        
-        
 
         jScrollPaneContact.setViewportView(paneContact);
 
     }
 
-    private javax.swing.JLabel jLabelContact;
-    private javax.swing.JLabel jLabelContactBroadcast;
-    private javax.swing.JPanel jPanelContact;
-    private javax.swing.JPanel jPanelContactBroadcast;
+    private JPanel getContactEl(String text) {
+        JPanel jPanelContactNEW = new javax.swing.JPanel();
+        JLabel jLabelContactNEW = new javax.swing.JLabel();
+
+        jPanelContactNEW.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanelContactNEW.setBackground(Color.lightGray);
+
+        jLabelContactNEW.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
+        jLabelContactNEW.setText(text);
+
+        javax.swing.GroupLayout jPanelContact2Layout = new javax.swing.GroupLayout(jPanelContactNEW);
+        jPanelContactNEW.setLayout(jPanelContact2Layout);
+        jPanelContact2Layout.setHorizontalGroup(jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelContact2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabelContactNEW, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(117, Short.MAX_VALUE))
+        );
+        jPanelContact2Layout.setVerticalGroup(jPanelContact2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContact2Layout.createSequentialGroup()
+                        .addComponent(jLabelContactNEW)
+                        .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jPanelContactNEW.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ContactClick(text);
+            }
+        });
+
+        return jPanelContactNEW;
+    }
+
+    private void ContactClick(String contactName) {
+        jTextAreaMessageSend.setEnabled(true);
+        jTextAreaMessageSend.setEditable(true);
+
+        printMessageList(getRoom(contactName));
+    }
+
+    private ChatRoom getRoom(String name) {
+        for (ChatRoom contact : contacts) {
+            if (contact.getName().equals(name)) {
+                return contact;
+            }
+        }
+        return null;
+    }
+    // private ArrayList<JPanel> contactList = new ArrayList<JPanel>();
+
+    class ChatRoom {
+
+        private JPanel contactBar;
+
+        private String name;
+
+        private ArrayList<Object[]> messagge;
+
+        public ChatRoom(String name, JPanel contactBar) {
+            this.name = name;
+            this.contactBar = contactBar;
+            messagge = new ArrayList<>();
+        }
+
+        public void addMessage(JPanel message, String type) {
+            Object[] a = {message, type};
+            messagge.add(a);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public ArrayList<Object[]> getMessagge() {
+            return messagge;
+        }
+
+        public JPanel getContactBar() {
+            return contactBar;
+        }
+
+        public void setContactBar(JPanel contactBar) {
+            this.contactBar = contactBar;
+        }
+
+    }
+
+    private ArrayList<ChatRoom> contacts = new ArrayList();
+
     private javax.swing.JPanel paneContact;
+
+    private ChatRoom currentChatRoom;
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;
     private javax.swing.JPanel jPanelMessageSend;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPaneContact;
     private javax.swing.JScrollPane jScrollPaneMessage;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane3;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextAreaMessageSend;
     // End of variables declaration//GEN-END:variables
 }
