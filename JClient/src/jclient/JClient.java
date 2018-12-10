@@ -10,11 +10,9 @@ package jclient;
  * @author luca
  */
 
-import java.util.*;
-
 public class JClient {
 
-    // ClientFrame f = new ClientFrame(); //da implementare
+    
     /**
      * @param args the command line arguments
      */

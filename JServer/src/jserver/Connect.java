@@ -67,8 +67,6 @@ class Connect extends Thread {
                 out.println("Hello");
                 name = "notSet " + conections.size();
 
-//                name = in.readLine();//leggo l'hostname
-//                updateHostList();
                 while (true) {//aggiungere condizione di uscita
                     try {
 
@@ -82,19 +80,23 @@ class Connect extends Thread {
                         if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
                             NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
 
+                            /* DEBUG (STAMPA MESSAGGIO COMPLETO)
                             for (int i = 0; i < CampiMessagio.getLength(); i++) {
                                 System.out.println(CampiMessagio.item(i).toString());
-                            }
+                            }*/
 
                             Node campiFigli = d.getElementsByTagName("name").item(0);
-                            if (campiFigli != null) {//se mi manda il suo hostname
+                            if (campiFigli != null) {//se mi manda il suo hostname (primo collegamento)
                                 String tmp = campiFigli.getTextContent();
 
                                 for (Connect c : conections) {
                                     if (c.getHostName().equals(tmp)) {
-                                        System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                                        s.printMessage(tmp +" si è connesso con lo stesso nome di un utente già online.");
+                                        out.println("<root><connection>refused</connection><reason>Name already online</reason></root>"); //Mando un messaggio di connessione rifiutata
+                                        closeConection(0);
                                     }
                                 }
+                                out.println("<root><connection>accepted</connection></root>"); //Mando un messaggio di connessione accettata
                                 name = tmp;
                                 updateHostList();
                             }
@@ -115,11 +117,16 @@ class Connect extends Thread {
                                 }
                             }
 
-                            campiFigli = d.getElementsByTagName("close").item(0);
-                            if (campiFigli != null) {//se mi manda un messaggio
-                                System.out.println("Closing conection " + name + "...");
-                                closeConection();
-                                return;
+                            campiFigli = d.getElementsByTagName("connection").item(0);
+                            if (campiFigli != null) {//se mi manda un messaggio di gestione connessione per chiudere la connessione
+                                
+                                switch(campiFigli.getTextContent()){
+                                    case "close":
+                                        s.printMessage("Closing conection with client " + name + "...");
+                                        closeConection(0);
+                                        return;
+                                }
+                                
                             }
 
                         }
@@ -127,14 +134,14 @@ class Connect extends Thread {
                     } catch (SAXException ex) {
                         Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
-                        System.out.println("Message not well formatted");
+                        s.printMessage("Message not well formatted");
                     }
 
                 }
 
             } catch (IOException ex) {
                 Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
-                closeConection();
+                closeConection(1);
                 break;
             }
         }
@@ -164,7 +171,17 @@ class Connect extends Thread {
         });
     }
 
-    public synchronized void closeConection() {
+     /**
+     *
+     * @param state 0 closing by the client, 1 closing by the server
+     *
+     *
+     */
+    public synchronized void closeConection(int state) {
+        if(state == 1){
+            out.println("<root><connection>close</connection></root>");//mando il messaggio per chiudere la parte client
+        }
+        
         conections.remove(this);
         out.flush();
         out.close();

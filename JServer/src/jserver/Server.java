@@ -23,10 +23,13 @@ public class Server extends Thread{
     
     
     public Server() throws Exception {
-        System.out.println("jserver.Server.<init>()");
         Server = new ServerSocket(4000);
-        System.out.println("Il server e' in attesa sulla porta 4000");
+        System.out.println("Server avviato sulla porta 4000");
         this.start();
+    }
+    
+    public void printMessage(String message){
+        System.out.println("message");
     }
     
     public void run() {

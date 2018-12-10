@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  */
 public class ClientConnection {
 
-    protected ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
+    protected static ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
 
     private BufferedReader in;
     private PrintStream out;
@@ -55,7 +55,7 @@ public class ClientConnection {
      * @param hostName
      * @return true if the connection has been established
      */
-    public boolean startConnection(String IP, int port, String hostName) { //defaul localhost 4000
+    public boolean startConnection(String IP, int port, String hostName) { //default localhost 4000
 
         name = hostName;
         try {
@@ -63,27 +63,14 @@ public class ClientConnection {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintStream(socket.getOutputStream());
             conectionOpened = true;
-            String messaggio = in.readLine();//messaggio di hello
-            System.out.println("Messaggio ricevuto: " + messaggio);
-
-            out.println("<root><name>" + name + "</name></root>");//send to the server the hostname
-
+            
+            in.readLine();//legge messaggio di hello
+            
             Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
-
-            //per Test da console
-//            Scanner s = new Scanner(System.in);
-//
-//            while (true) {//aggiungere condizione di uscita
-//                String mess = s.nextLine();
-//
-//                if (mess.equals("/close")) {//comando per chiudere il client
-//                    closeConection(0);
-//                    return;//interromo l'esecuzione (non elegante)
-//                }
-//                brodcastMessage(mess);//mando quello in input da console
+            
+            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
             return true;
-//            }
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
             conectionOpened = false;
@@ -120,7 +107,7 @@ public class ClientConnection {
 
     /**
      *
-     * @param state 0 closing by the host 1 closing by the server -1 closing for
+     * @param state 0 closing by the client, 1 closing by the server, -1 closing for
      * error
      *
      */
@@ -129,7 +116,7 @@ public class ClientConnection {
             try {
                 conectionOpened = false;
                 if (state == 0) {
-                    out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+                    out.println("<root><connection>close</connection></root>");//mando il messaggio per chiudere la parte server
                 }
                 Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
                 out.close();//chiudo il resto
@@ -162,7 +149,7 @@ public class ClientConnection {
             while (cc.isConectionOpened()) {
                 try {
                     String messaggio = cc.in.readLine();
-                    System.out.println("Messaggio ricevuto: " + messaggio);
+                    System.out.println("DEBUG: Messaggio ricevuto: " + messaggio);
                     try {
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -173,12 +160,26 @@ public class ClientConnection {
 
                         if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
                             NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
-
-                            for (int i = 0; i < CampiMessagio.getLength(); i++) {
-                                System.out.println(CampiMessagio.item(i).toString());
+                            
+                            Node campiFigli = d.getElementsByTagName("connection").item(0);
+                            if(campiFigli != null){//se è presente un messaggio di gestione connessione
+                                
+                                switch (campiFigli.getTextContent()){
+                                case "accepted":
+                                    cf.showAlert("Connesso al server");
+                                    break;
+                                case "refused":
+                                    cf.showAlert("Connessione negata. Motivazione: " + d.getElementsByTagName("reason").item(0).getTextContent());
+                                    cc.closeConection(-1);
+                                    break;
+                                case "close":
+                                    cf.showAlert("Connessione chiusa dal server");
+                                    cc.closeConection(1);
+                                    break;
+                                }
                             }
 
-                            Node campiFigli = d.getElementsByTagName("host").item(0);
+                            campiFigli = d.getElementsByTagName("host").item(0);
                             if (campiFigli != null) {//se è presente la lista degli host
 
                                 Element eElement = (campiFigli.getNodeType() == Node.ELEMENT_NODE) ? (Element) campiFigli : null;
@@ -192,7 +193,6 @@ public class ClientConnection {
                                     cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli hos alla lista
                                     //aggiungere update form
                                     cf.updateRooms();
-                                    
                                 }
                             }
 
@@ -201,11 +201,6 @@ public class ClientConnection {
                                 System.out.println(campiFigli.getTextContent());//stampo messaggio
                                 System.out.println(campiFigli.getAttributes().getNamedItem("to"));//stampo nome
                                 cf.addMessageIn(campiFigli.getTextContent().replace('~', '\n'), campiFigli.getAttributes().getNamedItem("to").getTextContent(),campiFigli.getAttributes().getNamedItem("from").getTextContent());//, (campiFigli.getAttributes().getNamedItem("to").getTextContent().equals("Broadcast")));
-                            }
-
-                            campiFigli = d.getElementsByTagName("close").item(0);
-                            if (campiFigli != null) {//se è presente una richiesta di chiusura
-                                cc.closeConection(1);
                             }
                         }
                     } catch (ParserConfigurationException ex) {

@@ -10,15 +10,19 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.util.ArrayList;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
+
 
 /**
  *
  * @author LS_Fisso
  */
-public class ClientFrame extends javax.swing.JFrame {
+public final class ClientFrame extends javax.swing.JFrame {
+    
+    ClientConnection cc;
 
     /**
      * Creates new form ClientFrame
@@ -187,6 +191,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jButtonSend.setText("Send");
         jButtonSend.setEnabled(false);
+
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendActionPerformed(evt);
@@ -243,6 +248,7 @@ public class ClientFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+
             .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -324,12 +330,19 @@ public class ClientFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ClientFrame().setVisible(true);
             }
         });
+        
+        
+    }
+    
+    public void showAlert(String text){
+        showMessageDialog(null, text);
     }
 
     public void addMessageIn(String text, String to, String from) {
@@ -641,8 +654,6 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JPanel paneContact;
 
     private ChatRoom currentChatRoom;
-
-    ClientConnection cc;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
