@@ -176,16 +176,23 @@ public class ClientFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat");
+        setBackground(new java.awt.Color(255, 255, 255));
+        setIconImages(null);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
+        jSplitPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jSplitPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jSplitPane1.setDividerLocation(230);
         jSplitPane1.setDividerSize(4);
+        jSplitPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+        jScrollPaneContact.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPaneContact.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPaneContact.setToolTipText("");
         jSplitPane1.setLeftComponent(jScrollPaneContact);
 
         jSplitPane3.setDividerLocation(410);
@@ -197,11 +204,15 @@ public class ClientFrame extends javax.swing.JFrame {
         jScrollPaneMessage.setMinimumSize(new java.awt.Dimension(23, 100));
         jSplitPane3.setTopComponent(jScrollPaneMessage);
 
+        jPanelMessageSend.setBackground(new java.awt.Color(237, 237, 237));
+        jPanelMessageSend.setToolTipText("");
+
         jScrollPane4.setEnabled(false);
 
         jTextAreaMessageSend.setEditable(false);
         jTextAreaMessageSend.setColumns(20);
         jTextAreaMessageSend.setRows(1);
+        jTextAreaMessageSend.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jTextAreaMessageSend.setEnabled(false);
         jTextAreaMessageSend.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -210,6 +221,7 @@ public class ClientFrame extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(jTextAreaMessageSend);
 
+        jButtonSend.setBackground(java.awt.Color.lightGray);
         jButtonSend.setText("Send");
         jButtonSend.setEnabled(false);
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
@@ -224,8 +236,8 @@ public class ClientFrame extends javax.swing.JFrame {
             jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                .addGap(1, 1, 1)
                 .addComponent(jButtonSend)
                 .addContainerGap())
         );
@@ -235,15 +247,20 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelMessageSendLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelMessageSendLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4)
+                        .addGap(12, 12, 12))
+                    .addGroup(jPanelMessageSendLayout.createSequentialGroup()
                         .addComponent(jButtonSend)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addContainerGap(23, Short.MAX_VALUE))))
         );
 
         jSplitPane3.setRightComponent(jPanelMessageSend);
 
         jSplitPane1.setBottomComponent(jSplitPane3);
+
+        jMenuBar1.setBackground(new java.awt.Color(255, 255, 255));
+        jMenuBar1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jMenuBar1.setToolTipText("");
 
         jMenu1.setText("File");
 
@@ -267,7 +284,7 @@ public class ClientFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
         );
 
         pack();
@@ -378,6 +395,7 @@ public class ClientFrame extends javax.swing.JFrame {
         currentChatRoom.resetNotReaded();
 
         JPanel jPanelMessaggeList = new javax.swing.JPanel();
+        //jPanelMessaggeList.setBackground(new Color(228,220,212));
 
         javax.swing.GroupLayout jPanelMessaggeListLayout = new javax.swing.GroupLayout(jPanelMessaggeList);
 
@@ -412,10 +430,11 @@ public class ClientFrame extends javax.swing.JFrame {
         text = formatText(text, 35);
 
         JPanel jPanelMessageOut = new javax.swing.JPanel();
+        //jPanelMessageOut.setBackground(new Color(228,220,212));
         javax.swing.JTextArea jTextAreaMessageOut = new javax.swing.JTextArea();
 
         jTextAreaMessageOut.setEditable(false);
-        jTextAreaMessageOut.setBackground(java.awt.SystemColor.inactiveCaption);
+        jTextAreaMessageOut.setBackground(new Color(219,248,196));
         jTextAreaMessageOut.setColumns(20);
         jTextAreaMessageOut.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jTextAreaMessageOut.setRows(5);
@@ -451,7 +470,7 @@ public class ClientFrame extends javax.swing.JFrame {
         javax.swing.JTextArea jTextAreaMessageInNEW = new javax.swing.JTextArea();
 
         jTextAreaMessageInNEW.setEditable(false);
-        jTextAreaMessageInNEW.setBackground(new java.awt.Color(140, 175, 150));
+        jTextAreaMessageInNEW.setBackground(Color.white);
         jTextAreaMessageInNEW.setColumns(20);
         jTextAreaMessageInNEW.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jTextAreaMessageInNEW.setRows(5);
@@ -467,10 +486,11 @@ public class ClientFrame extends javax.swing.JFrame {
         if (!from.isEmpty()) {
             javax.swing.JTextArea jTextAreaMessageInfromNEW = jTextAreaMessageInfromNEW = new JTextArea();
             jTextAreaMessageInfromNEW.setEditable(false);
-            jTextAreaMessageInfromNEW.setBackground(new java.awt.Color(140, 175, 150));
+            jTextAreaMessageInfromNEW.setBackground(Color.white);
             jTextAreaMessageInfromNEW.setColumns(20);
             jTextAreaMessageInfromNEW.setFont(new java.awt.Font("Segoe UI Semibold", 0, 15)); // NOI18N
-            jTextAreaMessageInfromNEW.setForeground(Color.darkGray);
+            //jTextAreaMessageInfromNEW.setForeground(new Color(0x35cd96));
+            jTextAreaMessageInfromNEW.setForeground(getRoom(from).c);            
             jTextAreaMessageInfromNEW.setRows(1);
             jTextAreaMessageInfromNEW.setText(from);
             jTextAreaMessageInfromNEW.setToolTipText("");
@@ -584,12 +604,12 @@ public class ClientFrame extends javax.swing.JFrame {
 
         jLabelMessNEW.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
         jLabelMessNEW.setText("");
-        jLabelMessNEW.setForeground(Color.DARK_GRAY);
+        jLabelMessNEW.setForeground(new Color(18,209,97));
 
         jLabelContactNEW.setFont(new java.awt.Font("Yu Gothic Medium", 0, 24)); // NOI18N
         jLabelContactNEW.setText(text);
         jPanelContactNEW.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanelContactNEW.setBackground(Color.lightGray);
+        jPanelContactNEW.setBackground(Color.WHITE);
 
         javax.swing.GroupLayout jPanelContact2Layout = new javax.swing.GroupLayout(jPanelContactNEW);
         jPanelContactNEW.setLayout(jPanelContact2Layout);
@@ -637,9 +657,6 @@ public class ClientFrame extends javax.swing.JFrame {
         jFrameFatalError.show(true);
         jFrameFatalError.setAlwaysOnTop(true);
         jFrameFatalError.setBounds(this.getX() + (this.getWidth() / 2) - (jFrameFatalError.getWidth() / 2), this.getY() + (this.getHeight() / 2) - (jFrameFatalError.getHeight() / 2), jFrameFatalError.getWidth(), jFrameFatalError.getHeight());
-
-        
-        
         jLabelErrorFrame.setText("Connection Cosed");
         
         
@@ -660,7 +677,7 @@ public class ClientFrame extends javax.swing.JFrame {
     public void disconected(String name){
         ChatRoom r = getRoom(name);
         r.setOnline(false);
-        r.getContactBar().setBackground(Color.red);
+        r.getContactBar().setBackground(new Color(187,193,193));
     }
     
     public void connected(String name){
@@ -693,6 +710,15 @@ public class ClientFrame extends javax.swing.JFrame {
         private JLabel jLabelMessNEW;
         int count;
         private String name;
+        private Color c;
+        public final Color[] col = {
+            new Color(0x1f7aec),
+            new Color(0x35cd96),
+            new Color(0xb04632),
+            new Color(0xdfb610),
+            new Color(0xffa97a),
+            new Color(0x8b7add)
+        };
 
         private boolean online;
         private ArrayList<Object[]> messagge;
@@ -704,6 +730,7 @@ public class ClientFrame extends javax.swing.JFrame {
             messagge = new ArrayList<>();
             count = 0;
             online = true;
+            c = col[ (int) (Math.random()*(col.length-1)) ];
         }
 
         public void addMessage(JPanel message, String type) {
