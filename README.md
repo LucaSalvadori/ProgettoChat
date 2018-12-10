@@ -13,7 +13,7 @@ Features:
 
 The application is the result of a school project.
 
-#Author & Contributor
+# Author & Contributor  
 Luca Salvadori  
 Matteo Devigili  
 Alessandro Vescera  
