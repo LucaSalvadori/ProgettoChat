@@ -98,7 +98,7 @@ public class ClientConnection {
      */
     public void brodcastMessage(String message) {
         if (conectionOpened) {
-            sendMessage(message, "");//se l'host è vuoto va in brodcast
+            out.println("<root><message to='Broadcast' from='"+name+"'>" + message + "</message></root>");//mando messaggio all'host indicato
         }
     }
 
@@ -114,7 +114,7 @@ public class ClientConnection {
      */
     public void sendMessage(String message, String Host) {
         if (conectionOpened) {
-            out.println("<root><message to='" + Host + "'>" + message + "</message></root>");//mando messaggio all'host indicato
+            out.println("<root><message to='" + Host +"' from='"+name+ "'>" + message + "</message></root>");//mando messaggio all'host indicato
         }
     }
 
@@ -199,8 +199,8 @@ public class ClientConnection {
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se è presente un messaggio
                                 System.out.println(campiFigli.getTextContent());//stampo messaggio
-                                System.out.println(campiFigli.getAttributes().getNamedItem("name"));//stampo nome
-                                cf.addMessageIn(campiFigli.getTextContent(), campiFigli.getAttributes().getNamedItem("name").getTextContent(), false);
+                                System.out.println(campiFigli.getAttributes().getNamedItem("to"));//stampo nome
+                                cf.addMessageIn(campiFigli.getTextContent().replace('~', '\n'), campiFigli.getAttributes().getNamedItem("to").getTextContent(),campiFigli.getAttributes().getNamedItem("from").getTextContent());//, (campiFigli.getAttributes().getNamedItem("to").getTextContent().equals("Broadcast")));
                             }
 
                             campiFigli = d.getElementsByTagName("close").item(0);

@@ -71,7 +71,7 @@ class Connect extends Thread {
 //                updateHostList();
                 while (true) {//aggiungere condizione di uscita
                     try {
-                        
+
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
                         InputSource is = new InputSource(new StringReader(in.readLine()));
@@ -101,13 +101,14 @@ class Connect extends Thread {
 
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se mi manda un messaggio
-                                message = "<root>" + "<message " + "name='" + name + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
-                                System.out.println("Message: " + message);//stampo a video
                                 String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
+                                message = "<root>" + "<message " + "from='" + name + "' to='" + to + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
+                                System.out.println("Message: " + message);//stampo a video
+
                                 System.out.println("From: " + name);//stampo a video
                                 System.out.println("To: " + to);//stampo a video
 
-                                if (to.equals("")) {
+                                if (to.equals("Broadcast")) {
                                     sendToAll(message); //se è in brodcast
                                 } else {
                                     sendTo(to, message);

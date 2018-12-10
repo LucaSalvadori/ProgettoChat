@@ -32,7 +32,7 @@ public class ClientFrame extends javax.swing.JFrame {
         jFrame1.setBounds(this.getX() + (this.getWidth() / 2) - (jFrame1.getWidth() / 2), this.getY() + (this.getHeight() / 2) - (jFrame1.getHeight() / 2), jFrame1.getWidth(), jFrame1.getHeight());
 
         cc = new ClientConnection(this);
-        
+
         //test
         addContact("Broadcast");
 //        addContact("Matteo");
@@ -151,6 +151,11 @@ public class ClientFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jSplitPane1.setDividerLocation(230);
         jSplitPane1.setDividerSize(4);
@@ -250,7 +255,9 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
         // TODO add your handling code here:
-        cc.sendMessage(jTextAreaMessageSend.getText(), currentChatRoom.getName());
+
+        cc.sendMessage(jTextAreaMessageSend.getText().replace('\n', '~'), currentChatRoom.getName());
+
         currentChatRoom.addMessage(getMessageOut(jTextAreaMessageSend.getText()), "out");
         jTextAreaMessageSend.setText("");
         printMessageList(currentChatRoom);
@@ -273,19 +280,22 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
         //Client Start
-        if(cc.startConnection(jTextFieldAddress.getText(), Integer.parseInt(jTextFieldPort.getText()), jTextFieldUsername.getText())){
+        if (cc.startConnection(jTextFieldAddress.getText(), Integer.parseInt(jTextFieldPort.getText()), jTextFieldUsername.getText())) {
             jFrame1.dispose();
             this.enable();
             this.setAlwaysOnTop(true);//put the frame on top
             this.setAlwaysOnTop(false);
-        }else{
+        } else {
             System.out.println("jclient.ClientFrame.jButtonConnectActionPerformed() StartFailed");
         }
-        
-        
 
 
     }//GEN-LAST:event_jButtonConnectActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        cc.closeConection(0);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -321,13 +331,9 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void addMessageIn(String text,String from, boolean broadcast){
-        if(broadcast){
-            getRoom("Broadcast").addMessage(getMessageIN(text, from), "in");
-        }else{
-            getRoom(from).addMessage(getMessageIN(text, ""), "in");
-        }
+
+    public void addMessageIn(String text, String to, String from) {
+        getRoom(to).addMessage(getMessageIN(text, (to.equals("Broadcast")) ? from : ""), "in");
         printMessageList(currentChatRoom);
     }
 
@@ -568,15 +574,14 @@ public class ClientFrame extends javax.swing.JFrame {
         return jPanelContactNEW;
     }
 
-    
-    public void updateRooms(){
+    public void updateRooms() {
         for (String string : cc.getOnlineHost()) {
-            if(getRoom(string)==null){
+            if (getRoom(string) == null) {
                 addContact(string);
             }
         }
     }
-    
+
     private void ContactClick(String contactName) {
         jTextAreaMessageSend.setEnabled(true);
         jTextAreaMessageSend.setEditable(true);
@@ -636,7 +641,7 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JPanel paneContact;
 
     private ChatRoom currentChatRoom;
-    
+
     ClientConnection cc;
 
 
