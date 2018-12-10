@@ -66,10 +66,11 @@ public class ClientConnection {
             
             in.readLine();//legge messaggio di hello
             
+            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
+            
             Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
-            
-            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
+
             return true;
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
