@@ -40,6 +40,7 @@ public class ClientConnection {
     private boolean conectionOpened;//is the conection opened
 
     private ArrayList<String> onlineHost;
+    
 
     public ClientConnection(ClientFrame cf) {
         this.cf = cf;
@@ -65,10 +66,11 @@ public class ClientConnection {
             
             in.readLine();//legge messaggio di hello
             
+            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
+            
             Tr = new Thread(new reader(this));//creo e avvio un tread responsabile della lettura
             Tr.start();
-            
-            out.println("<root><name>" + name + "</name></root>");//Manda al server l'hostname
+
             return true;
         } catch (IOException ex) {
             Logger.getLogger(JClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -84,7 +86,7 @@ public class ClientConnection {
      */
     public void brodcastMessage(String message) {
         if (conectionOpened) {
-            sendMessage(message, "");//se l'host è vuoto va in brodcast
+            out.println("<root><message to='Broadcast' from='"+name+"'>" + message + "</message></root>");//mando messaggio all'host indicato
         }
     }
 
@@ -100,7 +102,7 @@ public class ClientConnection {
      */
     public void sendMessage(String message, String Host) {
         if (conectionOpened) {
-            out.println("<root><message to='" + Host + "'>" + message + "</message></root>");//mando messaggio all'host indicato
+            out.println("<root><message to='" + Host +"' from='"+name+ "'>" + message + "</message></root>");//mando messaggio all'host indicato
         }
     }
 
@@ -116,7 +118,6 @@ public class ClientConnection {
                 conectionOpened = false;
                 if (state == 0) {
                     out.println("<root><connection>close</connection></root>");//mando il messaggio per chiudere la parte server
-                    cf.printMessage("Connessione al server chiusa");
                 }
                 Tr.stop();//fermo il thread che legge i messaggi (soluzione non elegante)
                 out.close();//chiudo il resto
@@ -133,14 +134,16 @@ public class ClientConnection {
     public ArrayList<String> getOnlineHost() {
         return onlineHost;
     }
-    
-    public static class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
+
+    public class reader implements Runnable { //codice da eseguire in parallelo per avere le funzioni di lettura
 
         ClientConnection cc;
 
         public reader(ClientConnection cc) {
             this.cc = cc;
         }
+        
+        
 
         @Override
         public void run() {
@@ -164,14 +167,14 @@ public class ClientConnection {
                                 
                                 switch (campiFigli.getTextContent()){
                                 case "accepted":
-                                    cf.printMessage("Connesso al server");
+                                    cf.showAlert("Connesso al server");
                                     break;
                                 case "refused":
-                                    cf.printMessage("Connessione negata. Motivazione: " + d.getElementsByTagName("reason").item(0).getTextContent());
+                                    cf.showAlert("Connessione negata. Motivazione: " + d.getElementsByTagName("reason").item(0).getTextContent());
                                     cc.closeConection(-1);
                                     break;
                                 case "close":
-                                    cf.printMessage("Connessione chiusa dal server");
+                                    cf.showAlert("Connessione chiusa dal server");
                                     cc.closeConection(1);
                                     break;
                                 }
@@ -187,15 +190,18 @@ public class ClientConnection {
                                 cc.onlineHost.clear();//pulisco la lista degli host online
 
                                 for (int i = 0; i < ListaHost.getLength(); i++) {//la scorro
-                                    cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli host alla lista
-                                    cf.updateOnlineHosts(); //Chiamo il metodo che aggiorna la lista host online nel ClientFrame
+                                    //System.out.println(ListaHost.item(i).getTextContent());//stampo host
+                                    cc.onlineHost.add(ListaHost.item(i).getTextContent());//aggiungo gli hos alla lista
+                                    //aggiungere update form
+                                    cf.updateRooms();
                                 }
                             }
 
                             campiFigli = d.getElementsByTagName("message").item(0);
                             if (campiFigli != null) {//se è presente un messaggio
-                                cf.printMessage(campiFigli.getAttributes().getNamedItem("name") + ": " + campiFigli.getTextContent());
-
+                                System.out.println(campiFigli.getTextContent());//stampo messaggio
+                                System.out.println(campiFigli.getAttributes().getNamedItem("to"));//stampo nome
+                                cf.addMessageIn(campiFigli.getTextContent().replace('~', '\n'), campiFigli.getAttributes().getNamedItem("to").getTextContent(),campiFigli.getAttributes().getNamedItem("from").getTextContent());//, (campiFigli.getAttributes().getNamedItem("to").getTextContent().equals("Broadcast")));
                             }
                         }
                     } catch (ParserConfigurationException ex) {

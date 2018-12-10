@@ -16,9 +16,23 @@ public class JClient {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {     
-        ClientFrame f = new ClientFrame();
-        f.setVisible(true);
+    public static void main(String[] args) {
+        new ClientFrame().show(true);
+        
+        //test
+//        Scanner s = new Scanner(System.in);
+//
+//        ClientConnection cc = new ClientConnection(null);
+//
+//        cc.startConnection("localhost", 4000, ("Host" + ((int) (Math.random() * 10))));
+//
+//        cc.brodcastMessage("prova");
+//        for (int i = 0; i < 5; i++) {
+//            System.out.print("Send test Message to :");
+//            cc.sendMessage("test", s.nextLine());
+//        }
+//
+//        cc.closeConection(0);
     }
 
 }
