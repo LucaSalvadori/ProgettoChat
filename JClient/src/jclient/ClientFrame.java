@@ -17,6 +17,11 @@ import javax.swing.JTextArea;
  * @author LS_Fisso
  */
 public class ClientFrame extends javax.swing.JFrame {
+    
+    private ArrayList<ChatRoom> contacts = new ArrayList();
+    private javax.swing.JPanel paneContact;
+    private ChatRoom currentChatRoom;
+    ClientConnection cc;
 
     /**
      * Creates new form ClientFrame
@@ -779,16 +784,6 @@ public class ClientFrame extends javax.swing.JFrame {
         }
 
     }
-
-    private ArrayList<ChatRoom> contacts = new ArrayList();
-
-    private javax.swing.JPanel paneContact;
-
-    private ChatRoom currentChatRoom;
-
-    ClientConnection cc;
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonConnect;
     private javax.swing.JButton jButtonErrorFrame;

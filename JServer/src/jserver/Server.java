@@ -18,14 +18,14 @@ import java.util.logging.Logger;
  */
 public class Server extends Thread{
     private ServerSocket Server;
-    
     protected ArrayList<Connect> conections= new ArrayList();
     protected ArrayList<String> conectionsDisconnected= new ArrayList();
+    private ServerFrame sf;
     
-    public Server() throws Exception {
-        System.out.println("jserver.Server.<init>()");
+    public Server(ServerFrame sf) throws Exception {
+        this.sf = sf;
         Server = new ServerSocket(4000);
-        System.out.println("Il server e' in attesa sulla porta 4000");
+        sf.printLog("Server started on port 4000");
         this.start();
     }
     
@@ -34,14 +34,37 @@ public class Server extends Thread{
         while (true) {
 
             try {
-                System.out.println("In attesa di connessione...");
                 Socket client = Server.accept();
-                System.out.println("Connessione accettata da: " + client.getInetAddress());
-                conections.add(new Connect(client,conections,conectionsDisconnected,this)); // dopo aver creato la classe che gestisce la connesione la salvo in una lista che sarà poi utile per fare il broadcastdei messagi
+                sf.printLog(client.getInetAddress() + " Is trying to connect");
+                conections.add(new Connect(client,conections,conectionsDisconnected,this)); // dopo aver creato la classe che gestisce la connesione la salvo in una lista che sarà poi utile per fare il broadcast dei messagi
             } catch (IOException ex) {
                 Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
+    public void addClient(String name){
+        sf.addClient(name);
+        sf.printLog(name + " has connected");
+    }
+    
+    public void removeClient(String name){
+        sf.removeClient(name);
+    }
+    
+    public void printLog(String log){
+        sf.printLog(log);
+    }
+    
+    public void kickClient(String name){
+        conections.stream().filter((conection) -> (conection.getClientName().equals(name))).forEachOrdered((conection) -> {
+            conection.closeConection();
+        });
+    }
+    
+    public void kickAll(){
+        for (Connect conection : conections) {
+            conection.closeConection();
+        }
+    }
 }

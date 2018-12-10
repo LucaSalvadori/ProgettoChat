@@ -14,10 +14,8 @@ package jserver;
 
 
 public class JServer{
-    public static String host="";//lista dei client (da mettere in un posto migliore)
-    
     public static void main(String[] args) throws Exception {
-        Server s = new Server();
+        new ServerFrame().show(true);
     }
     
 }

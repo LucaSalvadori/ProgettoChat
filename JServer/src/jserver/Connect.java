@@ -70,7 +70,7 @@ class Connect extends Thread {
             String NEWname = ((Element) DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine()))).getElementsByTagName("root").item(0)).getElementsByTagName("name").item(0).getTextContent();
             for (Connect c : conections) {
                 if (c.getClientName().equals(NEWname)) {
-                    System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                    s.printLog(NEWname + " 2 is trying to connect with an already used name"); //bisogna fare qualcosa
                     out.println("<root><accepted>0</accepted></root>");
                     this.closeConection();
                     return;
@@ -78,6 +78,7 @@ class Connect extends Thread {
             }
             out.println("<root><accepted>1</accepted></root>");
             name = NEWname;
+            s.addClient(name);
             
             for (int i = 0; i < conectionsDisconnected.size() ; i++) {
                 if(conectionsDisconnected.get(i).equals(name)){
@@ -88,40 +89,19 @@ class Connect extends Thread {
             
             updateHostList();
 
-//                name = in.readLine();//leggo l'hostname
-//                updateHostList();
             while (true) {//aggiungere condizione di uscita
                 try {
-
-                    org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine())));
-
-//                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//                        DocumentBuilder builder = factory.newDocumentBuilder();
-//                        InputSource is = new InputSource(new StringReader(in.readLine()));
-//                        org.w3c.dom.Document doc = builder.parse(is);//faccio un parsing del messaggio
+                    String mess = in.readLine();
+                    s.printLog(name + " says " + mess);
+                    org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(mess)));
                     Element d = ((Element) doc.getElementsByTagName("root").item(0));//spachetto il tag root
 
                     if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
-                        NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
 
-                        for (int i = 0; i < CampiMessagio.getLength(); i++) {
-                            System.out.println(CampiMessagio.item(i).toString());
-                        }
-
-                        Node campiFigli = d.getElementsByTagName("name").item(0);
-                        if (campiFigli != null) {//se mi manda il suo hostname
-                            name = campiFigli.getTextContent();
-                            updateHostList();
-                        }
-
-                        campiFigli = d.getElementsByTagName("message").item(0);
-                        if (campiFigli != null) {//se mi manda un messaggio
+                        Node campiFigli = d.getElementsByTagName("message").item(0);
+                        if (campiFigli != null) {//se mi manda un messaggio per un client
                             String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
                             message = "<root>" + "<message " + "from='" + name + "' to='" + to + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
-                            System.out.println("Message: " + message);//stampo a video
-
-                            System.out.println("From: " + name);//stampo a video
-                            System.out.println("To: " + to);//stampo a video
 
                             if (to.equals("Broadcast")) {
                                 sendToAll(message); //se è in brodcast
@@ -134,7 +114,7 @@ class Connect extends Thread {
                         if (campiFigli != null) {//se mi manda un messaggio di gestione connessione
                             switch(campiFigli.getTextContent()){
                                 case "close":
-                                System.out.println("Closing conection " + name + "...");
+                                s.printLog(name + " asked to close connection. Closing connection");
                                 closeConection();
                                 return;
                             }
@@ -145,7 +125,7 @@ class Connect extends Thread {
                 } catch (SAXException ex) {
                     Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
-                    System.out.println("Message not well formatted");
+                    s.printLog(name + " has send a message not well formatted");
                 }
 
             }
@@ -185,6 +165,7 @@ class Connect extends Thread {
     }
     
     public synchronized void closeConection() {
+        s.removeClient(name);
         conections.remove(this);
         conectionsDisconnected.add(name);
         sendToAll("<root><connection><clientDisconnected>" + name + "</clientDisconnected></connection></root>");
