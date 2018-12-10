@@ -38,7 +38,7 @@ class Connect extends Thread {
         out.println(message);
     }
 
-    public String getHostName() {
+    public String getClientName() {
         return name;
     }
 
@@ -69,7 +69,7 @@ class Connect extends Thread {
 
             String NEWname = ((Element) DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine()))).getElementsByTagName("root").item(0)).getElementsByTagName("name").item(0).getTextContent();
             for (Connect c : conections) {
-                if (c.getHostName().equals(NEWname)) {
+                if (c.getClientName().equals(NEWname)) {
                     System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
                     out.println("<root><accepted>0</accepted></root>");
                     this.closeConection();
@@ -82,7 +82,7 @@ class Connect extends Thread {
             for (int i = 0; i < conectionsDisconnected.size() ; i++) {
                 if(conectionsDisconnected.get(i).equals(name)){
                     conectionsDisconnected.remove(i);
-                    sendToAll("<root><connected>" + name + "</connected></root>");
+                    sendToAll("<root><connection><clientConnected>" + name + "</clientConnected></connection></root>");
                 }
             }
             
@@ -110,15 +110,7 @@ class Connect extends Thread {
 
                         Node campiFigli = d.getElementsByTagName("name").item(0);
                         if (campiFigli != null) {//se mi manda il suo hostname
-                            String tmp = campiFigli.getTextContent();
-
-                            for (Connect c : conections) {
-                                if (c.getHostName().equals(tmp)) {
-                                    System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
-                                    closeConection();
-                                }
-                            }
-                            name = tmp;
+                            name = campiFigli.getTextContent();
                             updateHostList();
                         }
 
@@ -138,11 +130,14 @@ class Connect extends Thread {
                             }
                         }
 
-                        campiFigli = d.getElementsByTagName("close").item(0);
-                        if (campiFigli != null) {//se mi manda un messaggio
-                            System.out.println("Closing conection " + name + "...");
-                            closeConection();
-                            return;
+                        campiFigli = d.getElementsByTagName("connection").item(0);
+                        if (campiFigli != null) {//se mi manda un messaggio di gestione connessione
+                            switch(campiFigli.getTextContent()){
+                                case "close":
+                                System.out.println("Closing conection " + name + "...");
+                                closeConection();
+                                return;
+                            }
                         }
 
                     }
@@ -170,7 +165,7 @@ class Connect extends Thread {
         String message;
         message = "<root><host>";
         for (Connect conection : conections) {
-            message += "<name>" + conection.getHostName() + "</name>";
+            message += "<name>" + conection.getClientName() + "</name>";
         }
         message += "</host></root>";
         sendToAll(message);
@@ -184,15 +179,15 @@ class Connect extends Thread {
     }
 
     public void sendTo(String Host, String message) {
-        conections.stream().filter((c) -> (c.getHostName().equals(Host))).forEachOrdered((c) -> {
+        conections.stream().filter((c) -> (c.getClientName().equals(Host))).forEachOrdered((c) -> {
             c.print(message);
         });
     }
-
+    
     public synchronized void closeConection() {
         conections.remove(this);
         conectionsDisconnected.add(name);
-        sendToAll("<root><disconected>" + name + "</disconected></root>");
+        sendToAll("<root><connection><clientDisconnected>" + name + "</clientDisconnected></connection></root>");
         out.flush();
         out.close();
         try {

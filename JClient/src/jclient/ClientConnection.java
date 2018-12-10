@@ -132,7 +132,7 @@ public class ClientConnection {
             try {
                 conectionOpened = false;
                 if (state == 0) {
-                    out.println("<root><close>0</close></root>");//mando il messaggio per chiudere la parte server
+                    out.println("<root><connection>close</connection></root>");//mando il messaggio per chiudere la parte server
                 } else {
                     cf.connectionClosing(state);
                 }
@@ -208,21 +208,25 @@ public class ClientConnection {
                                 }
                             }
                             
-                            campiFigli = d.getElementsByTagName("connected").item(0);
-                            if (campiFigli != null) {
-                                //System.out.println("Connected: "+campiFigli.getTextContent());
-                                cf.connected(campiFigli.getTextContent());
-                            }
-                            
-                            campiFigli = d.getElementsByTagName("disconected").item(0);
-                            if (campiFigli != null) {
-                                //System.out.println("Disconnected: "+campiFigli.getTextContent());
-                                cf.disconected(campiFigli.getTextContent());
-                            }
-
-                            campiFigli = d.getElementsByTagName("close").item(0);
-                            if (campiFigli != null) {//se è presente una richiesta di chiusura
-                                cc.closeConection(1);
+                            campiFigli = d.getElementsByTagName("connection").item(0);
+                            if (campiFigli != null) {//Se è presente un messaggio di gestione connessione
+                                String clientName;
+                                
+                                switch(campiFigli.getFirstChild().getNodeName()){
+                                    case "clientConnected":
+                                        clientName = campiFigli.getFirstChild().getTextContent();
+                                        cf.connected(clientName);
+                                        break;
+                                    case "clientDisconnected":
+                                        clientName = campiFigli.getFirstChild().getTextContent();
+                                        if(clientName.equals(name)){
+                                            cc.closeConection(1);
+                                        }
+                                        else{
+                                            cf.disconected(clientName);
+                                        }
+                                        break;
+                                }
                             }
                         }
                     } catch (ParserConfigurationException ex) {
