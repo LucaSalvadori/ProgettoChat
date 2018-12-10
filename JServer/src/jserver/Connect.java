@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 class Connect extends Thread {
 
     ArrayList<Connect> conections;
+    ArrayList<String> conectionsDisconnected;
     private Socket client = null;
     private BufferedReader in = null;
     private PrintStream out = null;
@@ -41,8 +42,9 @@ class Connect extends Thread {
         return name;
     }
 
-    public Connect(Socket clienSocket, ArrayList<Connect> conections, Server s) {
+    public Connect(Socket clienSocket, ArrayList<Connect> conections, ArrayList<String> conectionsDisconnected, Server s) {
         this.conections = conections;
+        this.conectionsDisconnected = conectionsDisconnected;
         this.s = s;
         client = clienSocket;
         try {
@@ -56,86 +58,110 @@ class Connect extends Thread {
             }
             return;
         }
+        name = "";
         this.start();
     }
 
     public void run() {
         String message;
+        try {
+            out.println("Hello");
 
-        while (true) {
-            try {
-                out.println("Hello");
-                name = "notSet " + conections.size();
+            String NEWname = ((Element) DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine()))).getElementsByTagName("root").item(0)).getElementsByTagName("name").item(0).getTextContent();
+            for (Connect c : conections) {
+                if (c.getHostName().equals(NEWname)) {
+                    System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                    out.println("<root><accepted>0</accepted></root>");
+                    this.closeConection();
+                    return;
+                }
+            }
+            out.println("<root><accepted>1</accepted></root>");
+            name = NEWname;
+            
+            for (int i = 0; i < conectionsDisconnected.size() ; i++) {
+                if(conectionsDisconnected.get(i).equals(name)){
+                    conectionsDisconnected.remove(i);
+                    sendToAll("<root><connected>" + name + "</connected></root>");
+                }
+            }
+            
+            updateHostList();
 
 //                name = in.readLine();//leggo l'hostname
 //                updateHostList();
-                while (true) {//aggiungere condizione di uscita
-                    try {
-                        
-                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                        DocumentBuilder builder = factory.newDocumentBuilder();
-                        InputSource is = new InputSource(new StringReader(in.readLine()));
-                        org.w3c.dom.Document doc = builder.parse(is);//faccio un parsing del messaggio
+            while (true) {//aggiungere condizione di uscita
+                try {
 
-                        Element d = ((Element) doc.getElementsByTagName("root").item(0));//spachetto il tag root
+                    org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine())));
 
-                        if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
-                            NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
+//                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//                        DocumentBuilder builder = factory.newDocumentBuilder();
+//                        InputSource is = new InputSource(new StringReader(in.readLine()));
+//                        org.w3c.dom.Document doc = builder.parse(is);//faccio un parsing del messaggio
+                    Element d = ((Element) doc.getElementsByTagName("root").item(0));//spachetto il tag root
 
-                            for (int i = 0; i < CampiMessagio.getLength(); i++) {
-                                System.out.println(CampiMessagio.item(i).toString());
-                            }
+                    if (d.hasChildNodes()) {//se il messaggio contiene qualcosa
+                        NodeList CampiMessagio = d.getChildNodes();//estraggo i nodi
 
-                            Node campiFigli = d.getElementsByTagName("name").item(0);
-                            if (campiFigli != null) {//se mi manda il suo hostname
-                                String tmp = campiFigli.getTextContent();
-
-                                for (Connect c : conections) {
-                                    if (c.getHostName().equals(tmp)) {
-                                        System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
-                                    }
-                                }
-                                name = tmp;
-                                updateHostList();
-                            }
-
-                            campiFigli = d.getElementsByTagName("message").item(0);
-                            if (campiFigli != null) {//se mi manda un messaggio
-                                message = "<root>" + "<message " + "name='" + name + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
-                                System.out.println("Message: " + message);//stampo a video
-                                String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
-                                System.out.println("From: " + name);//stampo a video
-                                System.out.println("To: " + to);//stampo a video
-
-                                if (to.equals("")) {
-                                    sendToAll(message); //se è in brodcast
-                                } else {
-                                    sendTo(to, message);
-                                }
-                            }
-
-                            campiFigli = d.getElementsByTagName("close").item(0);
-                            if (campiFigli != null) {//se mi manda un messaggio
-                                System.out.println("Closing conection " + name + "...");
-                                closeConection();
-                                return;
-                            }
-
+                        for (int i = 0; i < CampiMessagio.getLength(); i++) {
+                            System.out.println(CampiMessagio.item(i).toString());
                         }
-                    } catch (ParserConfigurationException ex) {
-                    } catch (SAXException ex) {
-                        Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
-                        System.out.println("Message not well formatted");
-                    }
 
+                        Node campiFigli = d.getElementsByTagName("name").item(0);
+                        if (campiFigli != null) {//se mi manda il suo hostname
+                            String tmp = campiFigli.getTextContent();
+
+                            for (Connect c : conections) {
+                                if (c.getHostName().equals(tmp)) {
+                                    System.out.println("Settato nome uguale ad un altra connessione"); //bisogna fare qualcosa
+                                    closeConection();
+                                }
+                            }
+                            name = tmp;
+                            updateHostList();
+                        }
+
+                        campiFigli = d.getElementsByTagName("message").item(0);
+                        if (campiFigli != null) {//se mi manda un messaggio
+                            String to = campiFigli.getAttributes().getNamedItem("to").getTextContent();//prendo dagli attributi a chi il messaggio è destinato
+                            message = "<root>" + "<message " + "from='" + name + "' to='" + to + "' >" + campiFigli.getTextContent() + "</message>" + "</root>";
+                            System.out.println("Message: " + message);//stampo a video
+
+                            System.out.println("From: " + name);//stampo a video
+                            System.out.println("To: " + to);//stampo a video
+
+                            if (to.equals("Broadcast")) {
+                                sendToAll(message); //se è in brodcast
+                            } else {
+                                sendTo(to, message);
+                            }
+                        }
+
+                        campiFigli = d.getElementsByTagName("close").item(0);
+                        if (campiFigli != null) {//se mi manda un messaggio
+                            System.out.println("Closing conection " + name + "...");
+                            closeConection();
+                            return;
+                        }
+
+                    }
+                } catch (ParserConfigurationException ex) {
+                } catch (SAXException ex) {
+                    Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException e) {//se qualche campo non è ben formattato.... (da migliorare)
+                    System.out.println("Message not well formatted");
                 }
 
-            } catch (IOException ex) {
-                Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
-                closeConection();
-                break;
             }
+
+        } catch (IOException ex) {
+            Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
+            closeConection();
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -158,13 +184,15 @@ class Connect extends Thread {
     }
 
     public void sendTo(String Host, String message) {
-        conections.stream().filter((c) -> (c.getHostName().equalsIgnoreCase(Host))).forEachOrdered((c) -> {
+        conections.stream().filter((c) -> (c.getHostName().equals(Host))).forEachOrdered((c) -> {
             c.print(message);
         });
     }
 
     public synchronized void closeConection() {
         conections.remove(this);
+        conectionsDisconnected.add(name);
+        sendToAll("<root><disconected>" + name + "</disconected></root>");
         out.flush();
         out.close();
         try {

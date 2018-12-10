@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 public class Server extends Thread{
     private ServerSocket Server;
     
-    protected ArrayList<Connect> conections= new ArrayList<Connect>();
-    
+    protected ArrayList<Connect> conections= new ArrayList();
+    protected ArrayList<String> conectionsDisconnected= new ArrayList();
     
     public Server() throws Exception {
         System.out.println("jserver.Server.<init>()");
@@ -37,7 +37,7 @@ public class Server extends Thread{
                 System.out.println("In attesa di connessione...");
                 Socket client = Server.accept();
                 System.out.println("Connessione accettata da: " + client.getInetAddress());
-                conections.add(new Connect(client,conections,this)); // dopo aver creato la classe che gestisce la connesione la salvo in una lista che sarà poi utile per fare il broadcastdei messagi
+                conections.add(new Connect(client,conections,conectionsDisconnected,this)); // dopo aver creato la classe che gestisce la connesione la salvo in una lista che sarà poi utile per fare il broadcastdei messagi
             } catch (IOException ex) {
                 Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
             }
