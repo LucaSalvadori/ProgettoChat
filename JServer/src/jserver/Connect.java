@@ -165,8 +165,8 @@ class Connect extends Thread {
     }
     
     public synchronized void closeConection() {
-        s.removeClient(name);
         conections.remove(this);
+        s.removeClient(name);
         conectionsDisconnected.add(name);
         sendToAll("<root><connection><clientDisconnected>" + name + "</clientDisconnected></connection></root>");
         out.flush();

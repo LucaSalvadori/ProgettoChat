@@ -101,6 +101,7 @@ public class ServerFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jListClient);
 
         jButtonKickClient.setText("Kick Client");
+        jButtonKickClient.setEnabled(false);
         jButtonKickClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonKickClientActionPerformed(evt);
@@ -108,6 +109,7 @@ public class ServerFrame extends javax.swing.JFrame {
         });
 
         jButtonKickAll.setText("Kick All Client");
+        jButtonKickAll.setEnabled(false);
         jButtonKickAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonKickAllActionPerformed(evt);
@@ -185,20 +187,18 @@ public class ServerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        //Chiude tutte le connessioni con i client
-        
+        s.kickAll();//Chiude tutte le connessioni con i client
     }//GEN-LAST:event_formWindowClosing
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        //Chiude tutte le connessioni con i client
-        this.dispose();
+        s.kickAll(); //Chiude tutte le connessioni con i client
+        this.dispose(); //Chiude il form
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jButtonKickClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKickClientActionPerformed
         String name = jListClient.getSelectedValue();
         
         s.kickClient(name);
-        removeClient(name);
     }//GEN-LAST:event_jButtonKickClientActionPerformed
 
     private void jButtonKickAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKickAllActionPerformed

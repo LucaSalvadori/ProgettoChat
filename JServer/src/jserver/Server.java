@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +36,7 @@ public class Server extends Thread{
 
             try {
                 Socket client = Server.accept();
-                sf.printLog(client.getInetAddress() + " Is trying to connect");
+                sf.printLog(client.getInetAddress() + " is trying to connect");
                 conections.add(new Connect(client,conections,conectionsDisconnected,this)); // dopo aver creato la classe che gestisce la connesione la salvo in una lista che sarà poi utile per fare il broadcast dei messagi
             } catch (IOException ex) {
                 Logger.getLogger(JServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -57,9 +58,11 @@ public class Server extends Thread{
     }
     
     public void kickClient(String name){
-        conections.stream().filter((conection) -> (conection.getClientName().equals(name))).forEachOrdered((conection) -> {
-            conection.closeConection();
-        });
+        for (int i = 0; i < conections.size(); i++) {
+            if(conections.get(i).getName().equals(name)){
+                conections.get(i).closeConection();
+            }
+        }
     }
     
     public void kickAll(){

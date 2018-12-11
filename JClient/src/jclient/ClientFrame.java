@@ -687,7 +687,7 @@ public class ClientFrame extends javax.swing.JFrame {
     
     public void connected(String name){
         ChatRoom r = getRoom(name);
-        r.setOnline(true);       
+        r.setOnline(true);
         r.getContactBar().setBackground((r==currentChatRoom)?Color.gray:Color.white);
     }
     

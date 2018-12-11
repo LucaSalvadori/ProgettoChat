@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  */
 public class ClientConnection {
 
-    protected ClientFrame cf; //utilizzato per eseguire metodi del form (sarebbe da pensare qualcosa di migliore)
+    protected ClientFrame cf; //utilizzato per eseguire metodi del form
 
     private BufferedReader in;
     private PrintStream out;
