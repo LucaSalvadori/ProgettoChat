@@ -203,7 +203,6 @@
     <Component class="javax.swing.JButton" name="jButtonKickClient">
       <Properties>
         <Property name="text" type="java.lang.String" value="Kick Client"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonKickClientActionPerformed"/>
@@ -212,7 +211,6 @@
     <Component class="javax.swing.JButton" name="jButtonKickAll">
       <Properties>
         <Property name="text" type="java.lang.String" value="Kick All Client"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonKickAllActionPerformed"/>

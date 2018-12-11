@@ -44,12 +44,12 @@ public class Server extends Thread{
         }
     }
     
-    public void addClient(String name){
+    public void clientConnected(String name){
         sf.addClient(name);
         sf.printLog(name + " has connected");
     }
     
-    public void removeClient(String name){
+    public void clientDisconnected(String name){
         sf.removeClient(name);
     }
     
@@ -58,16 +58,19 @@ public class Server extends Thread{
     }
     
     public void kickClient(String name){
-        for (int i = 0; i < conections.size(); i++) {
-            if(conections.get(i).getName().equals(name)){
-                conections.get(i).closeConection();
+       for (Connect conection : conections) {
+            if(conection.getClientName().equals(name)){
+                conection.closeConection();
+                return;
             }
         }
+       sf.printLog(name + "kicked");
     }
     
     public void kickAll(){
         for (Connect conection : conections) {
             conection.closeConection();
         }
+        sf.printLog("all client kicked");
     }
 }

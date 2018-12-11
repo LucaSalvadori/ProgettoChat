@@ -212,6 +212,9 @@ public class ClientConnection {
                             if (campiFigli != null) {//Se è presente un messaggio di gestione connessione
                                 String clientName;
                                 
+                                Element eElement = (campiFigli.getNodeType() == Node.ELEMENT_NODE) ? (Element) campiFigli : null;
+                                
+                                
                                 switch(campiFigli.getFirstChild().getNodeName()){
                                     case "clientConnected":
                                         clientName = campiFigli.getFirstChild().getTextContent();

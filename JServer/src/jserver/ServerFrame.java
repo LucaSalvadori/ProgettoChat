@@ -101,7 +101,6 @@ public class ServerFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jListClient);
 
         jButtonKickClient.setText("Kick Client");
-        jButtonKickClient.setEnabled(false);
         jButtonKickClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonKickClientActionPerformed(evt);
@@ -109,7 +108,6 @@ public class ServerFrame extends javax.swing.JFrame {
         });
 
         jButtonKickAll.setText("Kick All Client");
-        jButtonKickAll.setEnabled(false);
         jButtonKickAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonKickAllActionPerformed(evt);
@@ -202,7 +200,7 @@ public class ServerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonKickClientActionPerformed
 
     private void jButtonKickAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKickAllActionPerformed
-        
+        s.kickAll();
     }//GEN-LAST:event_jButtonKickAllActionPerformed
 
     /**

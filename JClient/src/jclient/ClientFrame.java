@@ -152,9 +152,18 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
+        jFrameFatalError.setMinimumSize(null);
+        jFrameFatalError.setResizable(false);
+        jFrameFatalError.setSize(new java.awt.Dimension(232, 99));
+
         jLabelErrorFrame.setText("Error");
 
         jButtonErrorFrame.setText("Close");
+        jButtonErrorFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonErrorFrameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jFrameFatalErrorLayout = new javax.swing.GroupLayout(jFrameFatalError.getContentPane());
         jFrameFatalError.getContentPane().setLayout(jFrameFatalErrorLayout);
@@ -165,18 +174,18 @@ public class ClientFrame extends javax.swing.JFrame {
                 .addComponent(jLabelErrorFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jFrameFatalErrorLayout.createSequentialGroup()
-                .addGap(159, 159, 159)
+                .addGap(163, 163, 163)
                 .addComponent(jButtonErrorFrame)
-                .addContainerGap(182, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jFrameFatalErrorLayout.setVerticalGroup(
             jFrameFatalErrorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jFrameFatalErrorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabelErrorFrame)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(jButtonErrorFrame)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -342,6 +351,10 @@ public class ClientFrame extends javax.swing.JFrame {
         cc.closeConection(0);
         this.dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jButtonErrorFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonErrorFrameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonErrorFrameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -662,7 +675,7 @@ public class ClientFrame extends javax.swing.JFrame {
         jFrameFatalError.show(true);
         jFrameFatalError.setAlwaysOnTop(true);
         jFrameFatalError.setBounds(this.getX() + (this.getWidth() / 2) - (jFrameFatalError.getWidth() / 2), this.getY() + (this.getHeight() / 2) - (jFrameFatalError.getHeight() / 2), jFrameFatalError.getWidth(), jFrameFatalError.getHeight());
-        jLabelErrorFrame.setText("Connection Cosed");
+        jLabelErrorFrame.setText("Connection closed by the server");
         
         
         jButtonErrorFrame.addActionListener(new java.awt.event.ActionListener() {

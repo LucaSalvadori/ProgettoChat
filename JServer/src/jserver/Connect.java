@@ -70,7 +70,7 @@ class Connect extends Thread {
             String NEWname = ((Element) DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(in.readLine()))).getElementsByTagName("root").item(0)).getElementsByTagName("name").item(0).getTextContent();
             for (Connect c : conections) {
                 if (c.getClientName().equals(NEWname)) {
-                    s.printLog(NEWname + " 2 is trying to connect with an already used name"); //bisogna fare qualcosa
+                    s.printLog(NEWname + " is trying to connect with an already used name"); //bisogna fare qualcosa
                     out.println("<root><accepted>0</accepted></root>");
                     this.closeConection();
                     return;
@@ -78,7 +78,7 @@ class Connect extends Thread {
             }
             out.println("<root><accepted>1</accepted></root>");
             name = NEWname;
-            s.addClient(name);
+            s.clientConnected(name);
             
             for (int i = 0; i < conectionsDisconnected.size() ; i++) {
                 if(conectionsDisconnected.get(i).equals(name)){
@@ -165,10 +165,11 @@ class Connect extends Thread {
     }
     
     public synchronized void closeConection() {
-        conections.remove(this);
-        s.removeClient(name);
-        conectionsDisconnected.add(name);
+        s.clientDisconnected(name);
+        this.stop();
         sendToAll("<root><connection><clientDisconnected>" + name + "</clientDisconnected></connection></root>");
+        conections.remove(this);
+        conectionsDisconnected.add(name);
         out.flush();
         out.close();
         try {
